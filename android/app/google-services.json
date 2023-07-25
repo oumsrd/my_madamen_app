@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "317003608706",
+    "project_id": "my-madamen-app-8f181",
+    "storage_bucket": "my-madamen-app-8f181.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:317003608706:android:03da14115c5d9843c47a9b",
+        "android_client_info": {
+          "package_name": "com.example.my_madamn_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "317003608706-j42ete3cclr3mhvdfkkc2abaqme8kd9e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB54AU4MBHxgFD8KTD7JL8eutxVG9Vs_Rg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "317003608706-j42ete3cclr3mhvdfkkc2abaqme8kd9e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

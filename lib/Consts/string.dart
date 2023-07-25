@@ -1,0 +1,10 @@
+const login="Se Connecter",
+    email="Email",
+    password="Password",
+    rememberMe = "Remember me",
+    logout = "Logout",
+    forgetPassword="Forget Password ?",
+    myCard = "My Cards",
+    anyProblem="In case of any difficulty, contact administration",
+    emailHint="your.email@gmail.com",
+    passwordHint="* * * * * *";
