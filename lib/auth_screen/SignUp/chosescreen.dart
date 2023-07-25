@@ -5,7 +5,6 @@ import 'package:my_madamn_app/auth_screen/SignUp/signup_screen.dart';
 //import 'package:http/http.dart' as http;
 import 'package:velocity_x/velocity_x.dart';
 import '../../Consts/colors.dart';
-import '../../client/screens/auth_ui/sign_up/sign_up.dart';
 import '../../widgets_common/normal_text.dart';
 import '../../widgets_common/our_button.dart';
 

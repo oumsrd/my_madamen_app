@@ -9,12 +9,9 @@ import 'package:my_madamn_app/auth_screen/Login/sign_in_provider.dart';
 import 'package:my_madamn_app/auth_screen/SignUp/chose_role.dart';
 import 'package:my_madamn_app/auth_screen/SignUp/signup_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:my_madamn_app/client/constants/theme.dart';
-import 'package:my_madamn_app/client/provider/app_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'auth_screen/Login/internet_provider.dart';
-import 'client/screens/auth_ui/welcome/welcome.dart';
 
 void main() async  {
  WidgetsFlutterBinding.ensureInitialized();
@@ -69,7 +66,7 @@ class _MyAppState extends State<MyApp> {
         child: GetMaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'madamen app',
-          theme: themeData,
+          
           home:   LoginScreen(), 
           
           /*ThemeData(
