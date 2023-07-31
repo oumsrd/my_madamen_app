@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:get/get.dart';
@@ -77,12 +78,27 @@ class _LoginScreenState extends State<LoginScreen> {
    final RoundedLoadingButtonController googleController= RoundedLoadingButtonController();
       final RoundedLoadingButtonController facebookController= RoundedLoadingButtonController();
 
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
  bool isEmailValid = true;
  bool isPasswordValid = true;
    bool rememberMeChecked = false;
+   Future<void> _login() async {
+    try {
+      final String email = emailController.text.trim();
+      final String password = passwordController.text.trim();
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      // L'utilisateur est maintenant connecté, vous pouvez gérer la navigation vers d'autres pages ici.
+    } catch (e) {
+      // Gérez les erreurs d'authentification ici (par exemple, afficher une boîte de dialogue d'erreur).
+      print('Erreur de connexion : $e');
+    }
+  }
 
 
   
@@ -215,12 +231,15 @@ class _LoginScreenState extends State<LoginScreen> {
                          mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               RoundedLoadingButton(
+                                onPressed: (){
+                                  handleGoogleSignIn();
+                                 },
                                 controller: googleController,
                                 successColor: Colors.red,
                                 width: MediaQuery.of(context).size.width*0.80,
-                                 onPressed: (){
-                                  handleGoogleSignIn();
-                                 },
+                                elevation: 0,
+                                borderRadius: 25,
+                                color: Colors.red,
                                   child: Wrap(
                                     children:const [
                                       Icon(
@@ -232,7 +251,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               Text("Sign in with Google",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500),)
                               ],
                               ),
-                              color: Colors.red,
                               ),
                               const SizedBox(height: 10,),
                               ///facebook login button 
@@ -240,6 +258,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 controller: googleController,
                                 successColor: Colors.red,
                                 width: MediaQuery.of(context).size.width*0.80,
+                                 elevation: 0,
+                                borderRadius: 25,
                                  onPressed: (){},
                                   child: Wrap(
                                     children:const [
@@ -265,19 +285,19 @@ class _LoginScreenState extends State<LoginScreen> {
                                 title:"Se connecter",
                               onPress: () async {
                                String email = emailController.text;
-  String password = passwordController.text;
+                              String password = passwordController.text;
 
-  // Vérification de l'e-mail
-  if (!checkEmailValid(email)) {
-  setState(() {
-    isEmailValid = false;
-  });
-  return;
-} else {
-  setState(() {
-    isEmailValid = true;
-  });
-}
+                               // Vérification de l'e-mail
+                           if (!checkEmailValid(email)) {
+                            setState(() {
+                           isEmailValid = false;
+                       });
+                           return;
+                          } else {
+                             setState(() {
+                             isEmailValid = true;
+                               });
+                                 }
 
                     
                       // Vérification du mot de passe
@@ -294,6 +314,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     
                       // Les vérifications sont passées, procéder à la connexion ou à la création du compte
                       // Service.login(loginController.emailController, loginController.passwordController);
+                      _login();
                       Get.to(() => BienvenueScreen());
                     },
                     
@@ -349,18 +370,22 @@ class _LoginScreenState extends State<LoginScreen> {
             await sp.signInWithGoogle().then((value){
               if(sp.hasError==true){
                 openSnackbar(context, sp.errorCode.toString(), Colors.red);
-                        googleController.reset();
+                 googleController.reset();
               }
               else{
                //checking whether user exists or not
                sp.checkUserExists().then((value)async{
                 if(value==true){
                    // user exists
-                              
+                   sp.getUserDataFromFirestore(sp.uid).then((value) => sp.saveDataToSharedPreferences().then((value) => sp.setSignIn().then((value) {
+                    googleController.success();
+                    handleAfterSignIn();
+                   })));
                                 }
                 else{  
                        // user does not exist
-                       sp.saveDataToFirestore().then((value) => sp.saveDataToSharedPreferences().then((value) => sp.setSignIn().then((value){
+                       sp.saveDataToFirestore().then((value) => sp.saveDataToSharedPreferences()
+                       .then((value) => sp.setSignIn().then((value){
                         googleController.success();
                         handleAfterSignIn();
                        })));

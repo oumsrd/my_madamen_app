@@ -86,6 +86,11 @@ notifyListeners();
   _errorCode="Some unexpected error while trying to sign in";
   _hasError=true;
   notifyListeners();
+  break;
+  default:
+  _errorCode=e.toString();
+  _hasError=true;
+  notifyListeners();
  }
     }
  } else {
@@ -96,7 +101,11 @@ notifyListeners();
 
 //entry for cloudfirestore
 Future getUserDataFromFirestore(uid)async{
-  await FirebaseFirestore.instance.collection("users").doc(uid).get().then((DocumentSnapshot snapshot) => {
+  await FirebaseFirestore.instance
+  .collection("users")
+  .doc(uid)
+  .get()
+  .then((DocumentSnapshot snapshot) => {
     _uid = snapshot["uid"],
     _name=snapshot["name"],
     _email=snapshot["email"],
@@ -110,7 +119,7 @@ Future saveDataToFirestore()async{
     "uid":_uid,
     "name":_name,
     "email":_email,
-    "image_Url":_imageUrl,
+    "image_url":_imageUrl,
     "provider":_provider,
   });
   notifyListeners();

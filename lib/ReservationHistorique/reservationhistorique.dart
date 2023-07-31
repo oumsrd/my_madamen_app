@@ -1,13 +1,49 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:my_madamn_app/widgets_common/AppBar_widget.dart';
 
 import '../widgets_common/menu_boutton.dart';
 
-class HistoriqueReservation extends StatelessWidget {
+class HistoriqueReservation extends StatefulWidget {
   final String userName;
   final List<Map<String, dynamic>> reservations;
 
   HistoriqueReservation({required this.userName, required this.reservations});
+
+  @override
+  State<HistoriqueReservation> createState() => _HistoriqueReservationState();
+}
+
+class _HistoriqueReservationState extends State<HistoriqueReservation> {
+  User? user = FirebaseAuth.instance.currentUser;
+    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  late String _firstName;
+  late String _lastName;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    try {
+      User? user = _auth.currentUser;
+      String userId = user!.uid;
+      DocumentSnapshot docSnapshot =
+          await _firestore.collection('users').doc(userId).get();
+
+      setState(() {
+        _firstName = docSnapshot['firstName'];
+        _lastName = docSnapshot['lastName'];
+      });
+    } catch (e) {
+      // Gérez les erreurs ici.
+      print('Erreur lors de la récupération des données : $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +63,7 @@ class HistoriqueReservation extends StatelessWidget {
           children: [
             SizedBox(height: 10),
             Text(
-              'Utilisateur: $userName',
+              'Utilisateur: $_firstName $_lastName',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
@@ -44,9 +80,9 @@ class HistoriqueReservation extends StatelessWidget {
             SizedBox(height: 20),
             Expanded(
               child: ListView.builder(
-                itemCount: reservations.length,
+                itemCount: widget.reservations.length,
                 itemBuilder: (context, index) {
-                  final reservation = reservations[index];
+                  final reservation = widget.reservations[index];
                   final selectedServices =
                       reservation['selectedServices'] as List<Map<String, dynamic>>;
                   final date = reservation['date'] as DateTime;

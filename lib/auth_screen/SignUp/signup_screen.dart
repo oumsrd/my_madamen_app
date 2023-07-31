@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:get/get.dart';
@@ -16,13 +18,41 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-//  Service loginController =Get.put(Service());
-//'eve.holt@reqres.in'
-//'pistol'
-   
-
+  
   TextEditingController emailController = TextEditingController();
+    TextEditingController nomController = TextEditingController();
+  TextEditingController prenomController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+   Future<void> _signUp() async {
+    try {
+      final String email = emailController.text.trim();
+      final String password = passwordController.text.trim();
+      final String nom = nomController.text.trim();
+      final String prenom = prenomController.text.trim();
+
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+        
+      );
+       String firstName = prenomController.text.trim();
+      String lastName = nomController.text.trim();
+
+      String userId = userCredential.user!.uid;
+
+      await _firestore.collection('users').doc(userId).set({
+        'email': email,
+        'firstName': firstName,
+        'lastName': lastName,
+        
+      });
+    } catch (e) {
+      print('Erreur d\'inscription : $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,7 +96,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 18),
                           child: TextFormField(
-                            controller: emailController,
+                            controller: nomController,
                             decoration: InputDecoration(
                               filled: true,
                               fillColor: Colors.white,
@@ -90,7 +120,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 18),
                           child: TextFormField(
-                            controller: emailController,
+                            controller: prenomController,
                             decoration: InputDecoration(
                               filled: true,
                               fillColor: Colors.white,
@@ -214,6 +244,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               color: BbRed,
                               title: "Créer un compte",
                               onPress: () async{
+                                _signUp();
                                 Get.to(() =>  BienvenueScreen());
                                
                               },
