@@ -1,12 +1,17 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:get/get.dart';
+import 'package:my_madamn_app/auth_screen/Login/login_screen.dart';
 import 'package:my_madamn_app/auth_screen/SignUp/salonSignupDetails.dart';
 import 'package:my_madamn_app/bienvenue/bienvenue.dart';
 //import 'package:http/http.dart' as http;
 import 'package:velocity_x/velocity_x.dart';
 import '../../Consts/colors.dart';
 import '../../Consts/string.dart';
+import '../../constants/constants.dart';
+import '../../constants/routes.dart';
+import '../../firebase_helper/firebase_auth_helper/firebase_auth_helper.dart';
 import '../../widgets_common/normal_text.dart';
 import '../../widgets_common/our_button.dart';
 class Signup extends StatefulWidget {
@@ -21,9 +26,18 @@ class _SignupState extends State<Signup> {
 //'eve.holt@reqres.in'
 //'pistol'
    
+  bool isShowPassword = true;
 
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+    TextEditingController confirmpasswordController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
+    TextEditingController CardNumberController = TextEditingController();
+
+   bool rememberMeChecked = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,13 +59,7 @@ class _SignupState extends State<Signup> {
                 
                 //mainAxisAlignment: MainAxisAlignment.spaceEvenly ,
                 children: [
-                 Center(
-                    child:  Container(
-                   width: 400,
-                   child: Image.asset("assets/madamen.png", fit: BoxFit.contain,height: 200,)
-                 ),
-                    
-                  ),
+               50.heightBox,
              
                   Padding(
                     padding: const EdgeInsets.all(5.0),
@@ -62,16 +70,20 @@ class _SignupState extends State<Signup> {
                         Center(child: boldText(text: "Sign Up",color: BbRed)),
                          Row(children:[ 
                           20.widthBox,
-                          normalText(text:"Nom du Salon",color: BbRed)]),
-                        6.heightBox,
+                         // normalText(text:"Nom du Salon",color: BbRed)
+                         ]),
+                        20.heightBox,
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 18),
                           child: TextFormField(
-                            controller: emailController,
+                            controller: nameController,
                             decoration: InputDecoration(
                               filled: true,
                               fillColor: Colors.white,
-                              //hintText: 'Email',
+                              hintText: "Nom du Salon",
+                              prefixIcon: Icon(
+                    Icons.person_outline,
+                  ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                                 borderSide: const BorderSide(color:  BbRed),
@@ -82,12 +94,14 @@ class _SignupState extends State<Signup> {
                               ),
                               contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
                             ),
+                            
                           ),
                         ),
                          Row(children:[ 
                           20.widthBox,
-                          normalText(text:"Pseudonyme",color: BbRed)]),
-                        6.heightBox,
+                          //normalText(text:"Email",color: BbRed)
+                          ]),
+                        15.heightBox,
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 18),
                           child: TextFormField(
@@ -95,7 +109,10 @@ class _SignupState extends State<Signup> {
                             decoration: InputDecoration(
                               filled: true,
                               fillColor: Colors.white,
-                              //hintText: 'Email',
+                              hintText: 'Email',
+                              prefixIcon: Icon(
+                                Icons.email_outlined,
+                                  ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                                 borderSide: const BorderSide(color:  BbRed),
@@ -111,16 +128,50 @@ class _SignupState extends State<Signup> {
 
                         Row(children:[ 
                           20.widthBox,
-                          normalText(text:"Email",color: BbRed)]),
-                        6.heightBox,
+                         // normalText(text:"Téléphone",color: BbRed)
+                          ]),
+                        15.heightBox,
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 18),
                           child: TextFormField(
-                            controller: emailController,
+                            controller: phoneController,
+                             keyboardType: TextInputType.phone,
                             decoration: InputDecoration(
                               filled: true,
                               fillColor: Colors.white,
-                              //hintText: 'Email',
+                              hintText:"Téléphone",
+                            prefixIcon: Icon(
+                            Icons.phone_outlined,
+                             ),  
+                             border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: const BorderSide(color:  BbRed),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: const BorderSide(color:  BbRed), // Couleur du contour lorsqu'en focus
+                              ),
+                              contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                            ),
+                          ),
+                        ),
+
+                         Row(children:[ 
+                          20.widthBox,
+                        //  normalText(text:"Numéro de carte bancaire",color: BbRed)
+                          ]),
+                        15.heightBox,
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 18),
+                          child: TextFormField(
+                            controller: CardNumberController,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.white,
+                              hintText: 'Numéro de carte bancaire',
+                               prefixIcon: const Icon(
+                               Icons.payment                              ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                                 borderSide: const BorderSide(color:  BbRed),
@@ -133,20 +184,34 @@ class _SignupState extends State<Signup> {
                             ),
                           ),
                         ),
-                        SizedBox(height: 16),
                         Row(children:[ 
                           20.widthBox,
-                          normalText(text:"Mot de passe ",color:BbRed)]),
-                        6.heightBox,
+                         // normalText(text:"Mot de passe ",color:BbRed)
+                          ]),
+                        15.heightBox,
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 18),
                           child: TextFormField(
                             controller:passwordController,
-                            obscureText: true,
+                           obscureText: isShowPassword,
                             decoration: InputDecoration(
                               filled: true,
                               fillColor: Colors.white,
-                              //hintText: 'Password',
+                              hintText: 'Mot de passe',
+                               prefixIcon: const Icon(
+                               Icons.password_sharp,
+                                  ),
+                                   suffixIcon: CupertinoButton(
+                      onPressed: () {
+                        setState(() {
+                          isShowPassword = !isShowPassword;
+                        });
+                      },
+                      padding: EdgeInsets.zero,
+                      child: const Icon(
+                        Icons.visibility,
+                        color: Colors.grey,
+                      )),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                                 borderSide: const BorderSide(color:BbRed), // Couleur du contour
@@ -161,18 +226,22 @@ class _SignupState extends State<Signup> {
                         ),
                         Row(children:[ 
                           20.widthBox,
-                          normalText(text:"Confirmez le mot de passe ",color:BbRed)]),
-                        6.heightBox,
+                        //  normalText(text:"Confirmez le mot de passe ",color:BbRed)
+                          ]),
+                        15.heightBox,
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 18),
                           child: TextFormField(
-                            controller:passwordController,
+                            controller:confirmpasswordController,
                             obscureText: true,
                             decoration: InputDecoration(
                               filled: true,
                               fillColor: Colors.white,
-                              //hintText: 'Password',
-                              border: OutlineInputBorder(
+                              hintText: 'Confirmez le mot de passe',
+                                  prefixIcon: const Icon(
+                               Icons.password_sharp,
+                                  ),
+                                    border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                                 borderSide: const BorderSide(color:BbRed), // Couleur du contour
                               ),
@@ -185,18 +254,20 @@ class _SignupState extends State<Signup> {
                           ),
                         ),
                         
-                        SizedBox(height: 10),
                          Row(
                            children: [
                              2.widthBox,
                              Checkbox(
-                              checkColor: BbRed,
+                               checkColor:whiteColor,
+                          value: rememberMeChecked,
+                         onChanged: (value) {
+                        setState(() {
+                        rememberMeChecked = value!;
+                             });
+                             },
+                       activeColor: BbRed,
                               //borderSide: const BorderSide(color:BbRed), 
-                               value: false, // Ajoutez une valeur booléenne ici pour gérer l'état de la case à cocher
-                               onChanged: (value) {
-                                 // Ajoutez votre logique ici pour gérer le changement d'état de la case à cocher
-                               },
-                              activeColor: BbRed,
+                              
 
                              ),
                              normalText(text: "Se souvenir de moi ", color: BbRed,size: 10.0),
@@ -204,7 +275,28 @@ class _SignupState extends State<Signup> {
 
                            ],
                          ),
-                        30.heightBox,
+                         Column(children: [
+                            const SizedBox(
+                height: 5.0,
+              ),
+              const Center(child: Text("J'ai déjà un compte?",style: TextStyle(fontWeight: FontWeight.w600),)),
+              const SizedBox(
+                height: 2.0,
+              ),
+              Center(
+                child: CupertinoButton(
+                  onPressed: () {
+                    Get.to(() =>  LoginScreen());
+
+                  },
+                  child: Text(
+                    "Login",
+                    style: TextStyle(color: BbRed,fontWeight: FontWeight.w500),
+                  ),
+                ),
+              ),
+                         ],),
+                        10.heightBox,
                         
                         SizedBox(height: 15),
                         Center(
@@ -214,17 +306,26 @@ class _SignupState extends State<Signup> {
                             child: ourButton(
                               color: BbRed,
                               title: "Créer un compte",
-                              onPress: () async{
-                                Get.to(() =>  SalonSignupDetails());
-                               
-                              },
+                             onPress: () async {
+                  bool isVaildated = signUpVaildation(
+                      emailController.text, passwordController.text, nameController.text, phoneController.text);
+                  if (isVaildated) {
+                    bool isLogined = await FirebaseAuthHelper.instance
+                        .signUpForSalons(nameController.text, emailController.text, passwordController.text, phoneController.text,addressController.text,CardNumberController.text,context);
+                    if (isLogined) {
+                     /* Routes.instance.pushAndRemoveUntil(
+                          widget: const CustomBottomBar(), context: context);*/
+                          Get.to(() =>  SalonSignupDetails());
+                    }
+                  }
+                },
                             ),
                           ),
                         ),
                       ]
                     ).box
                     .width(300)
-                    .height(630)
+                    .height(680)
                     .color(Colors.white.withOpacity(0.5))
                    // .border(color: whiteColor)
                     .rounded

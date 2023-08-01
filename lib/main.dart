@@ -8,6 +8,7 @@ import 'package:my_madamn_app/auth_screen/Login/login_screen.dart';
 import 'package:my_madamn_app/auth_screen/Login/sign_in_provider.dart';
 import 'package:my_madamn_app/auth_screen/SignUp/chose_role.dart';
 import 'package:my_madamn_app/auth_screen/SignUp/signup_screen.dart';
+import 'package:my_madamn_app/provider/app_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -51,10 +52,10 @@ class _MyAppState extends State<MyApp> {
   }*/
   @override
   Widget build(BuildContext context) {
-   // return ChangeNotifierProvider<AppProvider>(
-     // create: (context) => AppProvider(),
+    return ChangeNotifierProvider<AppProvider>(
+      create: (context) => AppProvider(),
     //  child:
-      return MultiProvider(
+     /* return MultiProvider(
         providers: [
           ChangeNotifierProvider(
             create: ((context)=>SignInProvider())
@@ -62,20 +63,14 @@ class _MyAppState extends State<MyApp> {
              ChangeNotifierProvider(
             create: ((context)=>InternetProvider())
             ),
-            ],
+            ],*/
         child: GetMaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'madamen app',
           
           home:   LoginScreen(), 
           
-          /*ThemeData(
-            
-            appBarTheme: const AppBarTheme(
-              backgroundColor: Colors.transparent,
-              elevation: 0.0,
-            ),
-          ),*/
+        
           
         ),
       );

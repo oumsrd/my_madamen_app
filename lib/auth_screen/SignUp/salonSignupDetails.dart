@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_madamn_app/auth_screen/SignUp/SalonServices.dart';
@@ -17,8 +19,9 @@ class SalonSignupDetails extends StatefulWidget {
 }
 
 class _SalonSignupDetailsState extends State<SalonSignupDetails> {
-  TextEditingController villeController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
 
   List<String> selectedPhotos = [];
 
@@ -39,14 +42,8 @@ class _SalonSignupDetailsState extends State<SalonSignupDetails> {
             child: Center(
               child: Column(
                 children: [
-                  Container(
-                    width: 500,
-                    child: Image.asset(
-                      "assets/madamen.png",
-                      fit: BoxFit.contain,
-                      height: 200,
-                    ).box.width(200).height(250).make(),
-                  ),
+                                50.heightBox,
+
                   Padding(
                     padding: const EdgeInsets.all(5.0),
                     child: Column(
@@ -64,7 +61,7 @@ class _SalonSignupDetailsState extends State<SalonSignupDetails> {
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 18),
                           child: TextFormField(
-                            controller: villeController,
+                            controller: addressController,
                             decoration: InputDecoration(
                               filled: true,
                               fillColor: Colors.white,
@@ -100,7 +97,7 @@ class _SalonSignupDetailsState extends State<SalonSignupDetails> {
                               return GestureDetector(
                                 onTap: () {
                                   setState(() {
-                                                      final indexString = index.toString(); // Convert int to String
+                                      final indexString = index.toString(); // Convert int to String
 
                                     // Toggle photo selection when tapped.
                                     if (selectedPhotos.contains(indexString)) {
@@ -139,6 +136,15 @@ class _SalonSignupDetailsState extends State<SalonSignupDetails> {
                             color: BbRed,
                             title: "Continuer",
                             onPress: () async {
+                               try {
+                       await FirebaseFirestore.instance
+                             .collection('salons')
+                             .doc( FirebaseAuth.instance.currentUser?.uid)
+                             .update({'address': addressController.text});
+                           print('Address updated successfully!');
+    } catch (e) {
+      print('Error updating address: $e');
+    }
                               Get.to(() =>  SalonServices());
                             },
                           ),

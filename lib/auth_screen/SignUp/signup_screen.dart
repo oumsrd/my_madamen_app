@@ -74,13 +74,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 
                 //mainAxisAlignment: MainAxisAlignment.spaceEvenly ,
                 children: [
-                 Center(
-                    child:  Container(
-                   width: 400,
-                   child: Image.asset("assets/madamen.png", fit: BoxFit.contain,height: 200,)
-                 ),
-                    
-                  ),
+              
              
                   Padding(
                     padding: const EdgeInsets.all(5.0),

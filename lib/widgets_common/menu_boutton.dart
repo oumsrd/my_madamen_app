@@ -20,7 +20,7 @@ Widget MenuBoutton(BuildContext context) {
             title: normalText(text: 'Profil', color: BbRed, size: 20),
             onTap: () {
               // Rediriger vers l'écran du profil
-               Navigator.push( context, MaterialPageRoute(builder: (context) => Profil(userName:"Es-sraidi",userFirstName: "Oumeyma",userProfilePicUrl: "assets/bgimg.jpg", reservations: [],)),);
+               Navigator.push( context, MaterialPageRoute(builder: (context) => Profil()),);
             },
           ),
           ListTile(

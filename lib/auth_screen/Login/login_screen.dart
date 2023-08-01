@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:get/get.dart';
@@ -7,13 +8,16 @@ import 'package:my_madamn_app/auth_screen/Login/sign_in_provider.dart';
 import 'package:my_madamn_app/auth_screen/SignUp/chose_role.dart';
 import 'package:my_madamn_app/auth_screen/SignUp/signup_screen.dart';
 import 'package:my_madamn_app/bienvenue/bienvenue.dart';
-import 'package:my_madamn_app/utils/snack_bar.dart';
+import 'package:my_madamn_app/widgets_common/utils/snack_bar.dart';
 import 'package:my_madamn_app/widgets_common/next_screen.dart';
 import 'package:provider/provider.dart';
 //import 'package:http/http.dart' as http;
 import 'package:velocity_x/velocity_x.dart';
 import '../../Consts/colors.dart';
 import '../../Consts/string.dart';
+import '../../constants/constants.dart';
+import '../../constants/routes.dart';
+import '../../firebase_helper/firebase_auth_helper/firebase_auth_helper.dart';
 import '../../widgets_common/normal_text.dart';
 import '../../widgets_common/our_button.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
@@ -77,6 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
 //'pistol'
    final RoundedLoadingButtonController googleController= RoundedLoadingButtonController();
       final RoundedLoadingButtonController facebookController= RoundedLoadingButtonController();
+  bool isShowPassword = true;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -121,17 +126,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 
                 //mainAxisAlignment: MainAxisAlignment.spaceEvenly ,
                 children: [
-                 Center(
-                    child: Container(
-                      width: 500,
-                      child: Image.asset("assets/madamen.png", fit: BoxFit.contain,).box
-                    .width(200)
-                    .height(250)
-                   .make(),
-                    ),
-                    
-                  ),
-             
+                                 50.heightBox,
+
                   Padding(
                     padding: const EdgeInsets.all(5.0),
                     child: SingleChildScrollView(
@@ -142,8 +138,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         Center(child: boldText(text: "Login", color: BbRed)),
                         Row(
                           children: [
-                            20.widthBox,
-                            normalText(text: "email", color: BbRed),
+                            100.widthBox,
+                           // normalText(text: "email", color: BbRed),
                           ],
                         ),
                         6.heightBox,
@@ -154,7 +150,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             decoration: InputDecoration(
                               filled: true,
                               fillColor: Colors.white,
-                              // hintText: 'Email',
+                              hintText: 'Email',
+                                prefixIcon: Icon(
+                                Icons.email_outlined,
+                                  ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                                 borderSide: BorderSide(color: BbRed),
@@ -172,29 +171,42 @@ class _LoginScreenState extends State<LoginScreen> {
                         Row(
                           children: [
                             20.widthBox,
-                            normalText(text: "password", color: BbRed),
+                           // normalText(text: "password", color: BbRed),
                           ],
                         ),
                         6.heightBox,
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 18),
                           child: TextFormField(
-                            controller: passwordController,
-                            obscureText: true,
+                            controller:passwordController,
+                           obscureText: isShowPassword,
                             decoration: InputDecoration(
                               filled: true,
                               fillColor: Colors.white,
-                              // hintText: 'Password',
+                              hintText: 'Mot de passe',
+                               prefixIcon: const Icon(
+                               Icons.password_sharp,
+                                  ),
+                                   suffixIcon: CupertinoButton(
+                      onPressed: () {
+                        setState(() {
+                          isShowPassword = !isShowPassword;
+                        });
+                      },
+                      padding: EdgeInsets.zero,
+                      child: const Icon(
+                        Icons.visibility,
+                        color: Colors.grey,
+                      )),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide(color: BbRed),
+                                borderSide: const BorderSide(color:BbRed), // Couleur du contour
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide(color: BbRed),
+                                borderSide: BorderSide(color: BbRed), // Couleur du contour lorsqu'en focus
                               ),
                               contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                              errorText: isPasswordValid ? null : 'Mot de passe invalide',
                             ),
                           ),
                         ),
@@ -275,7 +287,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               color: Colors.blue,
                               )
                            ],),
-                          30.heightBox,
+                          100.heightBox,
                           Center(
                             child: SizedBox(
                               height: 45,
@@ -283,40 +295,17 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: ourButton(
                                 color: BbRed,
                                 title:"Se connecter",
-                              onPress: () async {
-                               String email = emailController.text;
-                              String password = passwordController.text;
+                                onPress: () async {
+                  bool isVaildated = loginVaildation(emailController.text, passwordController.text);
+                  if (isVaildated) {
+                    bool isLogined = await FirebaseAuthHelper.instance
+                        .login(emailController.text, passwordController.text, context);
+                    if (isLogined) {
+                        Get.to(() =>  BienvenueScreen());
 
-                               // Vérification de l'e-mail
-                           if (!checkEmailValid(email)) {
-                            setState(() {
-                           isEmailValid = false;
-                       });
-                           return;
-                          } else {
-                             setState(() {
-                             isEmailValid = true;
-                               });
-                                 }
-
-                    
-                      // Vérification du mot de passe
-                      PasswordStrength passwordStrength = checkPasswordStrength(password);
-                      if (passwordStrength == PasswordStrength.Weak) {
-                        setState(() {
-                          isPasswordValid = false;
-                        });
-                        return;
-                      } else if (passwordStrength == PasswordStrength.Medium) {
-                        // Le mot de passe est moyen
-                        // Demander à l'utilisateur de renforcer son mot de passe ou continuer avec un mot de passe moyen (selon votre logique)
-                      }
-                    
-                      // Les vérifications sont passées, procéder à la connexion ou à la création du compte
-                      // Service.login(loginController.emailController, loginController.passwordController);
-                      _login();
-                      Get.to(() => BienvenueScreen());
-                    },
+                    }
+                  }
+                },
                     
                     
                               ),
