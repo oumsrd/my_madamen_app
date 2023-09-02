@@ -3,29 +3,24 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:my_madamn_app/widgets_common/AppBar_widget.dart';
 
-import '../widgets_common/menu_boutton.dart';
-
 class HistoriqueReservation extends StatefulWidget {
-  final String userName;
-  final List<Map<String, dynamic>> reservations;
-
-  HistoriqueReservation({required this.userName, required this.reservations});
-
   @override
   State<HistoriqueReservation> createState() => _HistoriqueReservationState();
 }
 
 class _HistoriqueReservationState extends State<HistoriqueReservation> {
   User? user = FirebaseAuth.instance.currentUser;
-    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  late String _firstName;
-  late String _lastName;
+  late String _firstName = "";
+
+  List<Map<String, dynamic>> _reservations = [];
 
   @override
   void initState() {
     super.initState();
     _loadUserData();
+    _loadUserReservations();
   }
 
   Future<void> _loadUserData() async {
@@ -36,12 +31,30 @@ class _HistoriqueReservationState extends State<HistoriqueReservation> {
           await _firestore.collection('users').doc(userId).get();
 
       setState(() {
-        _firstName = docSnapshot['firstName'];
-        _lastName = docSnapshot['lastName'];
+        _firstName = docSnapshot['name'];
+        //_lastName = docSnapshot['lastName'];
       });
     } catch (e) {
-      // Gérez les erreurs ici.
-      print('Erreur lors de la récupération des données : $e');
+      print('Error fetching user data: $e');
+    }
+  }
+
+  Future<void> _loadUserReservations() async {
+    try {
+      User? user = _auth.currentUser;
+      String userId = user!.uid;
+      QuerySnapshot reservationSnapshot = await _firestore
+          .collection('reservations')
+          .where('userId', isEqualTo: userId)
+          .get();
+
+      setState(() {
+        _reservations = reservationSnapshot.docs
+            .map((doc) => doc.data() as Map<String, dynamic>)
+            .toList();
+      });
+    } catch (e) {
+      print('Error fetching user reservations: $e');
     }
   }
 
@@ -52,53 +65,63 @@ class _HistoriqueReservationState extends State<HistoriqueReservation> {
         preferredSize: Size.fromHeight(kToolbarHeight),
         child: CustomAppBar(),
       ),
-        drawer: 
-      
-      MenuBoutton(context),
       body: Container(
         padding: EdgeInsets.all(20.0),
-        color: Colors.white, // Set the background color of the body
+        color: Colors.white,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 10),
-            Text(
-              'Utilisateur: $_firstName $_lastName',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
-            ),
-            SizedBox(height: 20),
-            Text(
+Row(
+  children: [
+    CircleAvatar(
+      radius: 25,
+      backgroundImage: 
+           NetworkImage(user!.photoURL!)
+         
+    ),
+    SizedBox(width: 10),
+    Text(
+      ' $_firstName',
+      style: TextStyle(
+        fontWeight: FontWeight.w400,
+        fontSize: 20,
+      ),
+    ),
+  ],
+),
+           const  SizedBox(height: 20),
+            const Text(
               'Réservations:',
               style: TextStyle(
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w400,
                 fontSize: 20,
               ),
             ),
             SizedBox(height: 20),
             Expanded(
               child: ListView.builder(
-                itemCount: widget.reservations.length,
+                itemCount: _reservations.length,
                 itemBuilder: (context, index) {
-                  final reservation = widget.reservations[index];
+                  final reservation = _reservations[index];
+
                   final selectedServices =
-                      reservation['selectedServices'] as List<Map<String, dynamic>>;
-                  final date = reservation['date'] as DateTime;
-                  final time = reservation['time'] as TimeOfDay;
-                  final salon = reservation['stylistName'].toString();
+                      reservation['selectedServices'] ;
+                  final date = reservation['date'] ;
+                  final time = reservation['time'] ;
+                  final salon = reservation['salonName'];
+                  final price = reservation['totalPrice'];
 
                   return Card(
                     margin: EdgeInsets.symmetric(vertical: 10.0),
-                    color: Colors.grey[200], // Set the card background color
+                    color: Colors.grey[200],
                     child: Padding(
                       padding: EdgeInsets.all(15.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Salon: SalonName',
+                            'Salon: $salon',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
@@ -106,17 +129,27 @@ class _HistoriqueReservationState extends State<HistoriqueReservation> {
                           ),
                           SizedBox(height: 10),
                           Text(
-                            'Date: ${date.toString().split(' ')[0]}',
+                            'Date: $date',
                             style: TextStyle(
                               fontSize: 14,
                             ),
                           ),
                           Text(
-                            'Heure: ${time.format(context)}',
+                            'Heure: $time',
                             style: TextStyle(
                               fontSize: 14,
                             ),
                           ),
+                             SizedBox(height: 10),
+                          Text(
+                            'Prix total: $price DH',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          SizedBox(height: 5),
+
                           SizedBox(height: 10),
                           Text(
                             'Services:',
@@ -126,27 +159,28 @@ class _HistoriqueReservationState extends State<HistoriqueReservation> {
                             ),
                           ),
                           SizedBox(height: 5),
-                          Column(
-                            children: selectedServices
-                                .map(
-                                  (service) => ListTile(
-                                    title: Text(
-                                      service['title'],
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                    subtitle: Text(
-                                      '${service['duration']} Minutes - ${service['price']} DH',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                          ),
+                         Column(
+  children: selectedServices
+      .map<Widget>(
+        (service) => ListTile(
+          title: Text(
+            service,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+            ),
+          ),
+         /* subtitle: Text(
+            ' ${service['price']} DH',
+            style: TextStyle(
+              fontSize: 12,
+            ),
+          ),*/
+        ),
+      )
+      .toList(),
+),
+
                         ],
                       ),
                     ),

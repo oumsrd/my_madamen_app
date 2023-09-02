@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<resource>
+<string name="app_name">Madamen App</string>
+<string name="facebook_app_id">1351879219081145</string>
+<string name="fb_login_protocol_scheme">fb1351879219081145</string>
+<string name="facebook_client_token">00b3fd7dd8a1701b813c81fe743f1fb3</string>
+</resource>

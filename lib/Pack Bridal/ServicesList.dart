@@ -2,28 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_madamn_app/Consts/colors.dart';
 import 'package:velocity_x/velocity_x.dart';
-import '../Reservation/ReservationSuccess.dart';
 import '../SalonsScreen/ReserverSalon.dart';
-import '../bienvenue/bienvenue.dart';
 import '../widgets_common/AppBar_widget.dart';
 import '../widgets_common/menu_boutton.dart';
 import '../widgets_common/our_button.dart';
 
-var servicefacial = [
-  {'title': 'Massage', 'duration': 90, 'price': 50},
-  {'title': 'Hammam', 'duration': 30, 'price': 300},
-    {'title': 'Soin visage', 'duration': 30, 'price': 300},
-        {'title': 'Soin cheveux', 'duration': 30, 'price': 300},
-    {'title': 'make up', 'duration': 30, 'price': 300},
-    {'title': 'Soin hair', 'duration': 30, 'price': 300},
 
-
-];
 
 class ServicesList extends StatefulWidget {
   final stylist;
+  final String userType;
 
-  ServicesList(this.stylist);
+  ServicesList(this.stylist, this.userType);
 
   @override
   _ServicesListState createState() => _ServicesListState();
@@ -92,7 +82,7 @@ class _ServicesListState extends State<ServicesList> {
            ),
               ),
               SizedBox(height: 10),
-              Column(
+            /*  Column(
                  children: servicefacial.map((service) => ServiceTile(
                  service: service,
                  isSelected: selectedServices.contains(service),
@@ -108,7 +98,7 @@ class _ServicesListState extends State<ServicesList> {
              },
            )).toList(),
            
-              ),
+              ),*/
              Container(
              color: Colors.white.withOpacity(0.5),
                child: Column(
@@ -141,7 +131,7 @@ class _ServicesListState extends State<ServicesList> {
                          color: BbRed,
                          title:"Poursuivre",
                          onPress: () async{
-  Get.to(() =>  ReserverSalon(selectedServices: selectedServices, totalPrice: totalPrice));
+  Get.to(() =>  ReserverSalon(salonModel: widget.stylist,selectedServices: selectedServices, totalPrice: totalPrice, reservationId:"",userType: widget.userType,));
                          },
                        ),
                      ),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_madamn_app/widgets_common/menu_boutton.dart';
 import '../Consts/colors.dart';
-import '../recherche/recherchescreen.dart';
 
 Widget CustomAppBar() {
   return AppBar(
@@ -32,12 +31,12 @@ Widget CustomAppBar() {
       ],
     ),
     actions: [
-      IconButton(
+    /*  IconButton(
         onPressed: () {
         Get.to(() =>  RechercheScreen());
         },
         icon: Icon(Icons.search),
-      ),
+      ),*/
     ],
   );
 }

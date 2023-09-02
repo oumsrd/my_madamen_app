@@ -7,17 +7,17 @@ import 'package:my_madamn_app/widgets_common/our_button.dart';
 import 'package:provider/provider.dart';
 
 import '../../provider/app_provider.dart';
-import '../models/salon_model/salon_model.dart';
+import '../models/user_model/user_model.dart';
 import '../widgets_common/AppBar_widget.dart';
 
-class Profil extends StatefulWidget {
-  const Profil({super.key});
+class EditProfile extends StatefulWidget {
+  const EditProfile({super.key});
 
   @override
-  State<Profil> createState() => _ProfilState();
+  State<EditProfile> createState() => _EditProfileState();
 }
 
-class _ProfilState extends State<Profil> {
+class _EditProfileState extends State<EditProfile> {
   File? image;
   void takePicture() async {
     XFile? value = await ImagePicker()
@@ -36,7 +36,7 @@ class _ProfilState extends State<Profil> {
       context,
     );
     return Scaffold(
-      appBar: PreferredSize(
+      appBar:PreferredSize(
         preferredSize: Size.fromHeight(kToolbarHeight),
         child: CustomAppBar(),
       ),
@@ -75,9 +75,9 @@ class _ProfilState extends State<Profil> {
           ourButton(
             title: "Update",
             onPress: () async {
-              SalonModel salonModel = appProvider.getSalonInformation
+              UserModel userModel = appProvider.getUserInformation
                   .copyWith(name: textEditingController.text);
-              appProvider.updateSalonInfoFirebase(context,salonModel, image);
+              appProvider.updateUserInfoFirebase(context, userModel, image);
             },
           ),
         ],

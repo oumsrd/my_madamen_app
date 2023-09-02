@@ -1,50 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:my_madamn_app/Consts/colors.dart';
 import 'package:my_madamn_app/widgets_common/AppBar_widget.dart';
-import 'package:velocity_x/velocity_x.dart';
+import 'package:provider/provider.dart';
+import '../firebase_helper/firebase_firestore_helper/firebase_firestore.dart';
+import '../models/salon_model/salon_model.dart';
+import '../provider/app_provider.dart';
 import '../widgets_common/menu_boutton.dart';
 import 'SalonInfo.dart';
-const stylistData = [
-  {
-    'stylistName': 'Hoda Beauty',
-    'rating': '4.8',
-    'rateAmount': '56',
-    'imgUrl': 'assets/salon3.jpg',
-    'bgColor': BbYellow,
-    'adresse':'Sidi Abbad',
-    'isForWomenOnly':true
-  },
-  {
-    'stylistName': 'Beauty & Cosmetics',
-    'rating': '4.7',
-    'rateAmount': '80',
-    'imgUrl': 'assets/stylist1.jpg',
-    'bgColor': Color(0xffEBF6FF),
-    'adresse':'Gueliz',
-    'isForWomenOnly':true
 
-
-  },
-  {
-    'stylistName': 'Hair & Beauty ',
-    'rating': '4.7',
-    'rateAmount': '70',
-    'imgUrl': 'assets/stylist2.jpg',
-    'bgColor': Color(0xffFFF3EB),
-    'adresse':'Issil',
-    'isForWomenOnly':false
-
-
-  }
-];
 class SalonListScreen extends StatefulWidget {
+  final String userType;
+
+SalonListScreen({ required this.userType});
   @override
+   
   State<SalonListScreen> createState() => _SalonListScreenState();
 }
 
 class _SalonListScreenState extends State<SalonListScreen> {
 //bool isForWomenOnly=true;
+  List<SalonModel> salonModelList = [];
+  bool isLoading = false;
   @override
+  void initState() {
+    //AppProvider appProvider = Provider.of<AppProvider>(context, listen: false);
+   // appProvider.getUserInfoFirebase();
+     getSalonList();
+    super.initState();
+  }
+
+  void getSalonList() async {
+    setState(() {
+      isLoading = true;
+    });
+    salonModelList = await FirebaseFirestoreHelper.instance.getSalons();
+
+    salonModelList.shuffle();
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  TextEditingController search = TextEditingController();
+  List<SalonModel> searchList = [];
+  void searchSalons(String value) {
+    searchList = salonModelList
+        .where((element) =>
+            element.name.toLowerCase().contains(value.toLowerCase()))
+        .toList();
+    setState(() {});
+  }
+   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
@@ -54,163 +62,150 @@ class _SalonListScreenState extends State<SalonListScreen> {
       drawer: 
       
       MenuBoutton(context),
-      body: SafeArea(
-        child: Container(
-          height: double.infinity,
-          width: 500,   
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("assets/bgimg.jpg"),
-              fit: BoxFit.cover,
+      body:  isLoading
+  ? Center(
+      child: Container(
+        height: 100,
+        width: 100,
+        alignment: Alignment.center,
+        child: CircularProgressIndicator(),
+      ),
+    )
+  : SingleChildScrollView(
+      child: Container(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+          
+            TextFormField(
+              controller: search,
+              onChanged: (String value) {
+                searchSalons(value);
+              },
+              decoration: InputDecoration(hintText: "Rechercher...."),
             ),
-          ),
-          child: SingleChildScrollView(
-            child: Container(
-              margin: EdgeInsets.only(top: 50.0),
-              child: Center(
-                child:  Column(
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                   
-                  
-                  ],
-                ),
-              ),
-           
-              Container(
-                height: MediaQuery.of(context).size.height,
-                width: 600,
-                decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(50),
+            SizedBox(height: 24.0),
+            !isSearched()
+              ? const Padding(
+                  padding: EdgeInsets.only(top: 12.0),
+                  child: Text(
+                    "Liste des salons",
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                   
-                      Text(
-                        'Liste des salons',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 24,color: BbRed
-                        ),
+                )
+              : SizedBox.fromSize(),
+           const  SizedBox(height: 12.0),
+            search.text.isNotEmpty && searchList.isEmpty
+              ? const Center(child: Text("Aucun salon trouvé"))
+              : searchList.isNotEmpty
+                  ? GridView.builder(
+                      padding: EdgeInsets.only(bottom: 50),
+                      shrinkWrap: true,
+                      primary: false,
+                      itemCount: searchList.length,
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        mainAxisSpacing: 20,
+                        crossAxisSpacing: 20,
+                        childAspectRatio: 1,
+                        crossAxisCount: 1,
                       ),
-                      StylistCard(stylistData[0]),
-                      StylistCard(stylistData[1]),
-                      StylistCard(stylistData[2]),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ).box
-                .width(350)
-                .height(1600)
-                .color(Colors.white.withOpacity(0.5))
-                .rounded
-                .padding(const EdgeInsets.all(8))
-                .make(),
-              ),
-            ),
-          ),
+                      itemBuilder: (ctx, index) {
+                        SalonModel singleProduct = searchList[index];
+                        return StyledSalonCard(singleProduct,widget.userType);
+                      },
+                    )
+                  : salonModelList.isEmpty
+                      ? const Center(child: Text("Liste des salons est vide"))
+                      : GridView.builder(
+                          padding: EdgeInsets.only(bottom: 50),
+                          shrinkWrap: true,
+                          primary: false,
+                          itemCount: salonModelList.length,
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            mainAxisSpacing: 20,
+                            crossAxisSpacing: 20,
+                            childAspectRatio: 1,
+                            crossAxisCount: 1,
+                          ),
+                          itemBuilder: (ctx, index) {
+                            SalonModel singleProduct = salonModelList[index];
+                            return StyledSalonCard(singleProduct,widget.userType);
+                          },
+                        ),
+           const SizedBox(height: 12.0),
+          ],
         ),
       ),
+    ),
+
     );
+  }
+   bool isSearched() {
+    if (search.text.isNotEmpty && searchList.isEmpty) {
+      return true;
+    } else if (search.text.isEmpty && searchList.isNotEmpty) {
+      return false;
+    } else if (searchList.isNotEmpty) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
 
 
-// Dummy data for salon list
 
-class StylistCard extends StatelessWidget {
-  final stylist;
-  StylistCard(this.stylist);
+class StyledSalonCard extends StatelessWidget {
+  final SalonModel salon;
+  final String userType;
+
+  StyledSalonCard(this.salon, this.userType);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 10),
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height / 4 - 16,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: stylist['bgColor'],
+        color:BbPink.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(8.0),
       ),
-      child: Stack(
-        children: <Widget>[
-          Positioned(
-            top: 20,
-            right: -12,
-            child: Image.asset(
-              stylist['imgUrl'],height: 100,
-              width: MediaQuery.of(context).size.width * 0.30,
+       height: 200, // Modifiez cette valeur selon vos besoins
+      width: 180,
+      child: Column(
+        children: [
+          SizedBox(height: 10.0),
+          Image.network(
+            salon.image[0] ,
+            height: 250,
+            width: 180,
+          ),
+        //  SizedBox(height: 180.0),
+          Text(
+            salon.name,
+            style: TextStyle(
+              fontSize: 18.0,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          Padding(
-            padding: EdgeInsets.only(top: 40, left: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  stylist['stylistName'],
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 20,
-                  ),
-                ),
-                
-               
-                SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  children: <Widget>[
-                    Icon(
-                      Icons.star,
-                      size: 16,
-                      color:  BbRed,
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      stylist['rating'],
-                      style: TextStyle(
-                        color: BbRed,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                MaterialButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SalonInfo(stylist)));
-                  },
-                  color: BbRed,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    'Consulter le salon',
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
+          Center(child: Text("Adresse: ${salon.address}")),
+          SizedBox(height: 10.0),
+          SizedBox(
+            height: 45,
+            width: 180,
+            child: OutlinedButton(
+             onPressed: () {
+            // Naviguez vers la page de détails du salon avec les informations pertinentes
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SalonInfo(salon,userType),
+              ),
+            );
+          },
+              child: Text("Consulter le salon",style: TextStyle(color: BbRed),),
             ),
           ),
         ],
@@ -218,4 +213,3 @@ class StylistCard extends StatelessWidget {
     );
   }
 }
-

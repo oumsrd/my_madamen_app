@@ -43,7 +43,6 @@ dependencies:
   provider: ^6.0.5
   persistent_bottom_nav_bar: ^5.0.2
   image_picker: ^1.0.0
-  flutter_stripe: ^9.2.2
   get: ^4.6.5
   velocity_x: ^4.1.0
   firebase_core: ^2.15.0
@@ -54,6 +53,11 @@ dependencies:
   flutter_facebook_auth: ^6.0.0
   connectivity: ^3.0.6
   connectivity_plus: ^4.0.1
+  flutter_stripe: ^9.3.0
+  geolocator: ^10.0.0
+  geocoding: ^2.1.0
+
+
 
 dev_dependencies:
   flutter_test:
@@ -80,6 +84,8 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
    - assets/
+   - assets/google.png
+   - assets/facebook.png
    - assets/bgimg.jpg
    - assets/photo_0.jpg
    - assets/photo_1.jpg

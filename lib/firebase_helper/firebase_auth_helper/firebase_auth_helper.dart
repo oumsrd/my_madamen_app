@@ -51,7 +51,7 @@ Future<bool> signUpForSalons(
       UserCredential userCredential = await _auth
           .createUserWithEmailAndPassword(email: email, password: password);
       SalonModel salonModel = SalonModel(
-          id: userCredential.user!.uid, name: name, email: email, image: null, phone:phone, address:address, CartNumber: CartNumber);
+          id: userCredential.user!.uid, name: name, email: email, image:[],isFavourite: false, phone:phone, address:address, CartNumber: CartNumber);
 
       _firestore.collection("salons").doc(salonModel.id).set(salonModel.toJson());
       Navigator.of(context, rootNavigator: true).pop();

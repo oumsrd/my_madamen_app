@@ -1,12 +1,13 @@
 import 'dart:convert';
 
-SalonModel userModelFromJson(String str) => SalonModel.fromJson(json.decode(str));
+SalonModel salonModelFromJson(String str) => SalonModel.fromJson(json.decode(str));
 
-String userModelToJson(SalonModel data) => json.encode(data.toJson());
+String salonModelToJson(SalonModel data) => json.encode(data.toJson());
 
 class SalonModel {
   SalonModel({
-    this.image,
+    required this.image,
+        required this.isFavourite,
     required this.id,
     required this.name,
     required this.email,
@@ -17,7 +18,8 @@ class SalonModel {
 
   });
 
-  String? image;
+ List<dynamic> image;
+   bool isFavourite;
   String name;
   String email;
   String phone;
@@ -29,6 +31,7 @@ class SalonModel {
   factory SalonModel.fromJson(Map<String, dynamic> json) => SalonModel(
         id: json["id"],
         image: json["image"],
+        isFavourite: false,
         email: json["email"],
         name: json["name"], 
         CartNumber: json["cartNumber"],
@@ -39,6 +42,7 @@ class SalonModel {
   Map<String, dynamic> toJson() => {
         "id": id,
         "image": image,
+       "isFavourite": isFavourite,
         "name": name,
         "email": email,
         "phone":phone,
@@ -50,12 +54,14 @@ class SalonModel {
   SalonModel copyWith({
     String? name,
     image,
+    address,
   }) =>
       SalonModel(
         id: id,
         name: name ?? this.name,
         email: email,
         image: image ?? this.image,
+        isFavourite: isFavourite,
         phone: phone,
         address: address,
         CartNumber: CartNumber,

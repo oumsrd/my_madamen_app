@@ -1,6 +1,6 @@
 import 'package:my_madamn_app/Consts/const.dart';
 import 'package:my_madamn_app/widgets_common/normal_text.dart';
-Widget ourButton({title,color=purpleColor ,color1=whiteColor, onPress}){
+Widget ourButton({title,color=BbRed ,color1=whiteColor, onPress}){
   return ElevatedButton(
     style: ElevatedButton.styleFrom(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),

@@ -11,47 +11,44 @@ import '../models/user_model/user_model.dart';
 
 
 class AppProvider with ChangeNotifier {
-  final List<ProductModel> _cartProductList = [];
-  final List<ProductModel> _buyProductList = [];
 
-  UserModel? _userModel;
+ UserModel? _userModel;
+
+  UserModel get getUserInformation => _userModel!;
+
+
   SalonModel? _salonModel;
 
 
-  UserModel get getUserInformation => _userModel!;
   SalonModel get getSalonInformation => _salonModel!;
 
 
-  void addCartProduct(ProductModel productModel) {
-    _cartProductList.add(productModel);
+
+
+
+////////////////////favorite salons/////
+final List<SalonModel> _favouriteSalontList = [];
+
+  void addFavouriteSalon(SalonModel salonModel) {
+    _favouriteSalontList.add(salonModel);
     notifyListeners();
   }
 
-  void removeCartProduct(ProductModel productModel) {
-    _cartProductList.remove(productModel);
+  void removeFavouriteSalon(SalonModel salonModel) {
+    _favouriteSalontList.remove(salonModel);
     notifyListeners();
   }
 
-  List<ProductModel> get getCartProductList => _cartProductList;
+  List<SalonModel> get getFavouriteSalonList => _favouriteSalontList;
 
-  ///// Favourite ///////
-  final List<ProductModel> _favouriteProductList = [];
+  
 
-  void addFavouriteProduct(ProductModel productModel) {
-    _favouriteProductList.add(productModel);
-    notifyListeners();
-  }
-
-  void removeFavouriteProduct(ProductModel productModel) {
-    _favouriteProductList.remove(productModel);
-    notifyListeners();
-  }
-
-  List<ProductModel> get getFavouriteProductList => _favouriteProductList;
 
   ////// USer Information
   void getUserInfoFirebase() async {
+
     _userModel = await FirebaseFirestoreHelper.instance.getUserInformation();
+
     notifyListeners();
   }
 /////// SAlon Information 
@@ -59,11 +56,9 @@ void getSalonInfoFirebase() async {
     _salonModel = await FirebaseFirestoreHelper.instance.getSalonInformation();
     notifyListeners();
   }
-  void updateUserInfoFirebase(
-      BuildContext context, UserModel userModel, File? file) async {
+   void updateUserInfoFirebase( BuildContext context, UserModel userModel, File? file) async {
     if (file == null) {
       showLoaderDialog(context);
-
       _userModel = userModel;
       await FirebaseFirestore.instance
           .collection("users")
@@ -71,16 +66,20 @@ void getSalonInfoFirebase() async {
           .set(_userModel!.toJson());
       Navigator.of(context, rootNavigator: true).pop();
       Navigator.of(context).pop();
+
     } else {
       showLoaderDialog(context);
 
       String imageUrl =
           await FirebaseStorageHelper.instance.uploadUserImage(file);
+
       _userModel = userModel.copyWith(image: imageUrl);
+
       await FirebaseFirestore.instance
           .collection("users")
           .doc(_userModel!.id)
           .set(_userModel!.toJson());
+
       Navigator.of(context, rootNavigator: true).pop();
       Navigator.of(context).pop();
     }
@@ -89,79 +88,50 @@ void getSalonInfoFirebase() async {
     notifyListeners();
   }
   /////////////////update salon information
-  void updateSalonInfoFirebase(
-      BuildContext context, SalonModel salonModel, File? file) async {
-    if (file == null) {
-      showLoaderDialog(context);
-
-      _salonModel = salonModel;
-      await FirebaseFirestore.instance
-          .collection("salons")
-          .doc(_salonModel!.id)
-          .set(_salonModel!.toJson());
-      Navigator.of(context, rootNavigator: true).pop();
-      Navigator.of(context).pop();
-    } else {
-      showLoaderDialog(context);
-
-      String imageUrl =
-          await FirebaseStorageHelper.instance.uploadUserImage(file);
-      _salonModel = salonModel.copyWith(image: imageUrl);
-      await FirebaseFirestore.instance
-          .collection("salons")
-          .doc(_salonModel!.id)
-          .set(_salonModel!.toJson());
-      Navigator.of(context, rootNavigator: true).pop();
-      Navigator.of(context).pop();
+Future<void> updateSalonInfoFirebase(
+    BuildContext context, SalonModel salonModel,   List<File> imageFiles,
+) async {
+  try {
+    print(00000000000000000000000000000);
+    showLoaderDialog(context);
+    List<String> imageUrls = [];
+ for (File file in imageFiles) {
+      String imageUrl = await FirebaseStorageHelper.instance.uploadUserImage(file);
+      imageUrls.add(imageUrl);
     }
-    showMessage("Successfully updated profile");
+   salonModel = salonModel.copyWith(image: imageUrls);
+
+
+    /*if (file != null) {
+      print("AAAAAAAAAAA");
+      String imageUrl = await FirebaseStorageHelper.instance.uploadUserImage(file);
+      print("BBBBBBBBBB");
+      salonModel = salonModel.copyWith(image: imageUrl);
+      print("CCCCCCCCCCC");
+    }*/
+
+    await FirebaseFirestore.instance
+        .collection("salons")
+        .doc(salonModel.id)
+        .set(salonModel.toJson());
+      print("DDDDDDDDDDDD");
+
+    Navigator.of(context, rootNavigator: true).pop();
+    Navigator.of(context).pop();
+
+    showMessage("Successfully updated salon information");
 
     notifyListeners();
+  } catch (e) {
+    print('Error updating salon information: $e');
+    // Gérer l'erreur de manière appropriée, par exemple en affichant un message d'erreur.
   }
-  //////// TOTAL PRICE / // / // / / // / / / // /
+}
 
-  double totalPrice() {
-    double totalPrice = 0.0;
-    for (var element in _cartProductList) {
-      totalPrice += element.price * element.qty!;
-    }
-    return totalPrice;
-  }
+  
 
-  double totalPriceBuyProductList() {
-    double totalPrice = 0.0;
-    for (var element in _buyProductList) {
-      totalPrice += element.price * element.qty!;
-    }
-    return totalPrice;
-  }
+  
 
-  void updateQty(ProductModel productModel, int qty) {
-    int index = _cartProductList.indexOf(productModel);
-    _cartProductList[index].qty = qty;
-    notifyListeners();
-  }
-  ///////// BUY Product  / / // / / // / / / // /
+  
 
-  void addBuyProduct(ProductModel model) {
-    _buyProductList.add(model);
-    notifyListeners();
-  }
-
-  void addBuyProductCartList() {
-    _buyProductList.addAll(_cartProductList);
-    notifyListeners();
-  }
-
-  void clearCart() {
-    _cartProductList.clear();
-    notifyListeners();
-  }
-
-  void clearBuyProduct() {
-    _buyProductList.clear();
-    notifyListeners();
-  }
-
-  List<ProductModel> get getBuyProductList => _buyProductList;
 }

@@ -1,20 +1,26 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_madamn_app/Consts/colors.dart';
 import 'package:velocity_x/velocity_x.dart';
-
 import '../Reservation/ReservationSuccess.dart';
-import '../ReservationHistorique/reservationhistorique.dart';
+import '../ReservationHistorique/check_out.dart';
+import '../models/salon_model/salon_model.dart';
 import '../widgets_common/AppBar_widget.dart';
 import '../widgets_common/menu_boutton.dart';
 import '../widgets_common/our_button.dart';
 import 'SalonListScreen.dart';
+import 'package:intl/intl.dart';
 
 class ReserverSalon extends StatefulWidget {
+  final String userType;
+  final SalonModel salonModel;
   final List<Map<String, dynamic>> selectedServices;
   final num totalPrice;
+   final String reservationId;
 
-  ReserverSalon({required this.selectedServices, required this.totalPrice});
+  ReserverSalon({required this.selectedServices, required this.totalPrice, required this.salonModel, required this.reservationId, required this.userType});
 
   @override
   _ReserverSalonState createState() => _ReserverSalonState();
@@ -100,26 +106,48 @@ bool checkReservation(DateTime? date, TimeOfDay? time) {
 }
 
 
-  void _makeReservation() {
-    if (selectedDate != null && selectedTime != null) {
-      // Construire l'objet de réservation
-      Map<String, dynamic> reservation = {
-        'date': selectedDate,
-        'time': selectedTime,
-        'salon': widget, // Remplacez par le nom du salon sélectionné
-        'selectedServices': widget.selectedServices,
-      };
+ 
 
-      // Naviguer vers la page de succès de la réservation avec les données de réservation
-      Get.to(() => ReservationSuccess(/*reservation: reservation*/));
+  void _makeReservation() async {
+  if (selectedDate != null && selectedTime != null) {
+    final DateFormat dateFormatter = DateFormat('yyyy-MM-dd');
+    final TimeOfDayFormat timeFormatter = TimeOfDayFormat.HH_colon_mm;
 
-      // Envoyer les informations de réservation à la page HistoriqueReservation
-      Get.to(() => HistoriqueReservation(
-        userName: 'Oumeyma', 
-        reservations: [reservation],
-      ));
-    }
+    final DateTime selectedDateTime = DateTime(
+      selectedDate!.year,
+      selectedDate!.month,
+      selectedDate!.day,
+      selectedTime!.hour,
+      selectedTime!.minute,
+    );
+
+ Map<String, dynamic> reservationData = {
+      'date': dateFormatter.format(selectedDate!),
+      'time': DateFormat.Hm().format(selectedDateTime),
+      'salon': widget.salonModel.name,
+      'userId': FirebaseAuth.instance.currentUser?.uid, 
+      'userName': FirebaseAuth.instance.currentUser?.displayName,
+      // Ajoutez les autres données que vous voulez envoyer
+    };
+    final reservationRef =
+        FirebaseFirestore.instance.collection('reservations').doc(widget.reservationId);
+
+    await reservationRef.update({
+      'date': dateFormatter.format(selectedDate!),
+      'time': DateFormat.Hm().format(selectedDateTime),
+      'userId': FirebaseAuth.instance.currentUser?.uid,
+      'userName': FirebaseAuth.instance.currentUser?.displayName,
+    });
+
+    print(widget.reservationId);
+    //await Get.to(() => ReservationSuccess(/*passer des données si nécessaire*/));
+        await Get.to(() => Checkout( reservationData: reservationData,
+      selectedServices: widget.selectedServices,
+      totalPrice: widget.totalPrice,singleSalon:widget.salonModel/*passer des données si nécessaire*/));
+
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +163,7 @@ bool checkReservation(DateTime? date, TimeOfDay? time) {
       body: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
-        decoration: BoxDecoration(
+        decoration:const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/bgimg.jpg'),
             fit: BoxFit.cover,
@@ -148,8 +176,8 @@ bool checkReservation(DateTime? date, TimeOfDay? time) {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                SizedBox(height: 30),
-                Text(
+                const SizedBox(height: 30),
+                const Text(
                   'Vous avez choisi :',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -165,14 +193,14 @@ bool checkReservation(DateTime? date, TimeOfDay? time) {
                       final service = widget.selectedServices[index];
                       return ListTile(
                         title: Text(
-                          service['title'],
+                          service['name'],
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
                           ),
                         ),
                         subtitle: Text(
-                          '${service['duration']} Minutes - ${service['price']} DH',
+                          ' ${service['price']} DH',
                         ),
                       );
                     },
@@ -269,7 +297,7 @@ bool checkReservation(DateTime? date, TimeOfDay? time) {
                                 title: 'Changer de salon',
                                 onPress: 
                                 () {
-                                  Get.to(() => SalonListScreen());
+                                  Get.to(() => SalonListScreen(userType : widget.userType));
                                 },
                               ),
                             ),

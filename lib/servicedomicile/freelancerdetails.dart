@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_madamn_app/Consts/colors.dart';
-import 'package:my_madamn_app/SalonsScreen/SalonDetails.dart';
+import 'package:my_madamn_app/models/salon_model/salon_model.dart';
 //import 'package:http/http.dart' as http;
 import 'package:velocity_x/velocity_x.dart';
 import '../../widgets_common/normal_text.dart';
@@ -145,10 +145,10 @@ class _FreelancerDetailsState extends State<FreelancerDetails> {
                               color: BbRed,
                               title:"Poursuivre",
                               onPress: () {
-                    Navigator.push(
+                   /* Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => SalonDetails(stylistData)));
+                            builder: (context) => SalonDetails(stylistData as SalonModel)));*/
                   },
                             ),
                           ),

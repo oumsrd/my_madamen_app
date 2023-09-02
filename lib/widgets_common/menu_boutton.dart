@@ -1,14 +1,25 @@
  import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_madamn_app/Consts/const.dart';
+import 'package:my_madamn_app/SalonsScreen/SalonListScreen.dart';
+import 'package:my_madamn_app/account_screen/account_screens.dart';
+import 'package:my_madamn_app/favourite_screen/favourite_screen.dart';
 import 'package:my_madamn_app/servicedomicile/ServiceDomicile.dart';
+import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 import '../Pack Bridal/SalonsList.dart';
-import '../Profil/Profil.dart';
 import '../ReservationHistorique/reservationhistorique.dart';
+import '../auth_screen/Login/login_screen.dart';
+import '../constants/routes.dart';
+import '../firebase_helper/firebase_auth_helper/firebase_auth_helper.dart';
+import '../provider/app_provider.dart';
+import '../servicedomicile/FreelancersList.dart';
 import 'normal_text.dart';
 Widget MenuBoutton(BuildContext context) {
+  AppProvider? appProvider = Provider.of<AppProvider>(
+    context,
+  );
   return Drawer(
     child: Container(
       color: BbPink,
@@ -17,33 +28,60 @@ Widget MenuBoutton(BuildContext context) {
         children: [
           40.heightBox,
           ListTile(
-            title: normalText(text: 'Profil', color: BbRed, size: 20),
+            title: normalText(text: 'Accueil', color: whiteColor, size: 20),
             onTap: () {
-              // Rediriger vers l'écran du profil
-               Navigator.push( context, MaterialPageRoute(builder: (context) => Profil()),);
-            },
-          ),
-          ListTile(
-            title: normalText(text: 'Service à domicile', color: BbRed, size: 20),
-            onTap: () {
-              // Rediriger vers l'écran du service à domicile
-              Get.to(() => ServiceDomicile());
-            },
-          ),
-          ListTile(
-            title: normalText(text: 'Mes réservations', color: BbRed, size: 20),
-            onTap: () {
-               Get.to(() => HistoriqueReservation(reservations: [], userName: '',));
+               Get.to(() =>SalonListScreen(userType: "client",));
 
             },
           ),
           ListTile(
-            title: normalText(text: 'Pack bridal', color: BbRed, size: 20),
+            title: normalText(text: 'Profile', color: whiteColor, size: 20),
+            onTap: () {
+              // Rediriger vers l'écran du profil
+              
+              Get.to(() => AccountScreen());
+          
+},
+          ),
+          ListTile(
+            title: normalText(text: 'Service à domicile', color: whiteColor, size: 20),
+            onTap: () {
+              // Rediriger vers l'écran du service à domicile
+              Get.to(() => FreelancersList());
+            },
+          ),
+          ListTile(
+            title: normalText(text: 'Mes réservations', color: whiteColor, size: 20),
+            onTap: () {
+               Get.to(() => HistoriqueReservation());
+
+            },
+          ),
+            ListTile(
+            title: normalText(text: 'Mes favoris', color: whiteColor, size: 20),
+            onTap: () {
+               Get.to(() => FavouriteScreen());
+
+            },
+          ),
+          ListTile(
+            title: normalText(text: 'Pack bridal', color: whiteColor, size: 20),
             onTap: () {
               // Rediriger vers l'écran du pack bridal
                Navigator.push(context,MaterialPageRoute(builder: (context) => SalonsList()), );
             },
           ),
+          ListTile(
+            title: normalText(text: 'Se déconnecter', color: whiteColor, size: 20),
+            onTap: () {
+              FirebaseAuthHelper.instance.signOut();
+                      Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginScreen(userType:"client",)), // Replace with your login screen widget
+                 ); 
+
+
+            },)
         ],
       ),
     ),

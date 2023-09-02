@@ -1,265 +1,334 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'dart:convert';
 import 'package:get/get.dart';
+import 'package:my_madamn_app/auth_screen/Login/login_screen.dart';
 import 'package:my_madamn_app/bienvenue/bienvenue.dart';
 //import 'package:http/http.dart' as http;
 import 'package:velocity_x/velocity_x.dart';
 import '../../Consts/colors.dart';
-import '../../Consts/string.dart';
+import '../../constants/constants.dart';
+import '../../firebase_helper/firebase_auth_helper/firebase_auth_helper.dart';
 import '../../widgets_common/normal_text.dart';
 import '../../widgets_common/our_button.dart';
 class SignupScreen extends StatefulWidget {
-  const SignupScreen({super.key});
+  final String userType;
+  const SignupScreen({super.key, required this.userType});
 
   @override
   State<SignupScreen> createState() => _SignupScreenState();
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-  
+   
+  bool isShowPassword = true;
+
   TextEditingController emailController = TextEditingController();
-    TextEditingController nomController = TextEditingController();
-  TextEditingController prenomController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-   Future<void> _signUp() async {
-    try {
-      final String email = emailController.text.trim();
-      final String password = passwordController.text.trim();
-      final String nom = nomController.text.trim();
-      final String prenom = prenomController.text.trim();
+    TextEditingController confirmpasswordController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
+    TextEditingController CardNumberController = TextEditingController();
 
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-        
-      );
-       String firstName = prenomController.text.trim();
-      String lastName = nomController.text.trim();
-
-      String userId = userCredential.user!.uid;
-
-      await _firestore.collection('users').doc(userId).set({
-        'email': email,
-        'firstName': firstName,
-        'lastName': lastName,
-        
-      });
-    } catch (e) {
-      print('Erreur d\'inscription : $e');
-    }
-  }
+   bool rememberMeChecked = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Container(
-         height: double.infinity ,
-          width: 500,
-          //backgroundColor : const Color.fromARGB(0, 97, 21, 250),
+      body: Container(
+       height: double.infinity ,
+        width: 500,
+        //backgroundColor : const Color.fromARGB(0, 97, 21, 250),
        
-          decoration:const BoxDecoration(
-           image: DecorationImage(
-            image: AssetImage("assets/bgimg.jpg"),
-            fit: BoxFit.cover,
-          ),
-          ),
-          child: SingleChildScrollView(
-            child: Center(
-              child: Column(
-                
-                //mainAxisAlignment: MainAxisAlignment.spaceEvenly ,
-                children: [
+        decoration:const BoxDecoration(
+         image: DecorationImage(
+          image: AssetImage("assets/bgimg.jpg"),
+          fit: BoxFit.cover,
+        ),
+        ),
+        child: SingleChildScrollView(
+          child: Center(
+            child: Column(
               
-             
-                  Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children : [
-                        20.heightBox,
-                        Center(child: boldText(text: "Sign Up",color: BbRed)),
-                         Row(children:[ 
-                          20.widthBox,
-                          normalText(text:"Nom",color: BbRed)]),
-                        6.heightBox,
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 18),
-                          child: TextFormField(
-                            controller: nomController,
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.white,
-                              //hintText: 'Email',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(color:  BbRed),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(color:  BbRed), // Couleur du contour lorsqu'en focus
-                              ),
-                              contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+              //mainAxisAlignment: MainAxisAlignment.spaceEvenly ,
+              children: [
+             80.heightBox,
+           
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children : [
+                      20.heightBox,
+                      Center(child: boldText(text: "Sign Up",color: BbRed)),
+                       Row(children:[ 
+                        20.widthBox,
+                       // normalText(text:"Nom du Salon",color: BbRed)
+                       ]),
+                      20.heightBox,
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 18),
+                        child: TextFormField(
+                          controller: nameController,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
+                            hintText: "Nom ",
+                            prefixIcon: Icon(
+                  Icons.person_outline,
+                ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(color:  BbRed),
                             ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(color:  BbRed), // Couleur du contour lorsqu'en focus
+                            ),
+                            contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                          ),
+                          
+                        ),
+                      ),
+                       Row(children:[ 
+                        20.widthBox,
+                        //normalText(text:"Email",color: BbRed)
+                        ]),
+                      15.heightBox,
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 18),
+                        child: TextFormField(
+                          controller: emailController,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
+                            hintText: 'Email',
+                            prefixIcon: Icon(
+                              Icons.email_outlined,
+                                ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(color:  BbRed),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(color:  BbRed), // Couleur du contour lorsqu'en focus
+                            ),
+                            contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
                           ),
                         ),
-                         Row(children:[ 
-                          20.widthBox,
-                          normalText(text:"Prénom",color: BbRed)]),
-                        6.heightBox,
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 18),
-                          child: TextFormField(
-                            controller: prenomController,
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.white,
-                              //hintText: 'Email',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(color:  BbRed),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(color:  BbRed), // Couleur du contour lorsqu'en focus
-                              ),
-                              contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                            ),
-                          ),
-                        ),
+                      ),
 
-                        Row(children:[ 
-                          20.widthBox,
-                          normalText(text:"Email",color: BbRed)]),
-                        6.heightBox,
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 18),
-                          child: TextFormField(
-                            controller: emailController,
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.white,
-                              //hintText: 'Email',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(color:  BbRed),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(color:  BbRed), // Couleur du contour lorsqu'en focus
-                              ),
-                              contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                      Row(children:[ 
+                        20.widthBox,
+                       // normalText(text:"Téléphone",color: BbRed)
+                        ]),
+                      15.heightBox,
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 18),
+                        child: TextFormField(
+                          controller: phoneController,
+                           keyboardType: TextInputType.phone,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
+                            hintText:"Téléphone",
+                          prefixIcon: Icon(
+                          Icons.phone_outlined,
+                           ),  
+                           border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(color:  BbRed),
                             ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(color:  BbRed), // Couleur du contour lorsqu'en focus
+                            ),
+                            contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
                           ),
                         ),
-                        SizedBox(height: 16),
-                        Row(children:[ 
-                          20.widthBox,
-                          normalText(text:"Mot de passe ",color:BbRed)]),
-                        6.heightBox,
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 18),
-                          child: TextFormField(
-                            controller:passwordController,
-                            obscureText: true,
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.white,
-                              //hintText: 'Password',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(color:BbRed), // Couleur du contour
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide(color: BbRed), // Couleur du contour lorsqu'en focus
-                              ),
-                              contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                            ),
-                          ),
-                        ),
-                        Row(children:[ 
-                          20.widthBox,
-                          normalText(text:"Confirmez le mot de passe ",color:BbRed)]),
-                        6.heightBox,
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 18),
-                          child: TextFormField(
-                            controller:passwordController,
-                            obscureText: true,
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.white,
-                              //hintText: 'Password',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(color:BbRed), // Couleur du contour
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide(color: BbRed), // Couleur du contour lorsqu'en focus
-                              ),
-                              contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                            ),
-                          ),
-                        ),
-                        
-                        SizedBox(height: 10),
-                         Row(
-                           children: [
-                             2.widthBox,
-                             Checkbox(
-                              checkColor: BbRed,
-                              //borderSide: const BorderSide(color:BbRed), 
-                               value: false, // Ajoutez une valeur booléenne ici pour gérer l'état de la case à cocher
-                               onChanged: (value) {
-                                 // Ajoutez votre logique ici pour gérer le changement d'état de la case à cocher
-                               },
-                              activeColor: BbRed,
+                      ),
 
-                             ),
-                             normalText(text: "Se souvenir de moi ", color: BbRed,size: 10.0),
-                           
-
-                           ],
-                         ),
-                        30.heightBox,
-                        
-                        SizedBox(height: 15),
-                        Center(
-                          child: SizedBox(
-                            height: 45,
-                            width: context.screenWidth - 107,
-                            child: ourButton(
-                              color: BbRed,
-                              title: "Créer un compte",
-                              onPress: () async{
-                                _signUp();
-                                Get.to(() =>  BienvenueScreen());
-                               
-                              },
+                      /* Row(
+                        children:[ 
+                        20.widthBox,
+                      //  normalText(text:"Numéro de carte bancaire",color: BbRed)
+                        ]),
+                      15.heightBox,
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 18),
+                        child: TextFormField(
+                          controller: CardNumberController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
+                            hintText: 'Numéro de carte bancaire',
+                             prefixIcon: const Icon(
+                             Icons.payment                              ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(color:  BbRed),
                             ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(color:  BbRed), // Couleur du contour lorsqu'en focus
+                            ),
+                            contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
                           ),
                         ),
-                      ]
-                    ).box
-                    .width(300)
-                    .height(630)
-                    .color(Colors.white.withOpacity(0.5))
-                   // .border(color: whiteColor)
-                    .rounded
-                    //.shadowMd
-                    .padding(const EdgeInsets.all(8))
-                    .make(),
-                  ),
-                
-                ],
-              )
+                      ),*/
+                      Row(children:[ 
+                        20.widthBox,
+                        ]),
+                      15.heightBox,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 18),
+                        child: TextFormField(
+                          controller:passwordController,
+                         obscureText: isShowPassword,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
+                            hintText: 'Mot de passe',
+                             prefixIcon: const Icon(
+                             Icons.password_sharp,
+                                ),
+                                 suffixIcon: CupertinoButton(
+                    onPressed: () {
+                      setState(() {
+                        isShowPassword = !isShowPassword;
+                      });
+                    },
+                    padding: EdgeInsets.zero,
+                    child: const Icon(
+                      Icons.visibility,
+                      color: Colors.grey,
+                    )),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(color:BbRed), // Couleur du contour
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: BbRed), // Couleur du contour lorsqu'en focus
+                            ),
+                            contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                          ),
+                        ),
+                      ),
+                      Row(children:[ 
+                        20.widthBox,
+                      //  normalText(text:"Confirmez le mot de passe ",color:BbRed)
+                        ]),
+                      15.heightBox,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 18),
+                        child: TextFormField(
+                          controller:confirmpasswordController,
+                          obscureText: true,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
+                            hintText: 'Confirmez le mot de passe',
+                                prefixIcon: const Icon(
+                             Icons.password_sharp,
+                                ),
+                                  border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(color:BbRed), // Couleur du contour
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: BbRed), // Couleur du contour lorsqu'en focus
+                            ),
+                            contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                          ),
+                        ),
+                      ),
+                      
+                       Row(
+                         children: [
+                           2.widthBox,
+                           Checkbox(
+                             checkColor:whiteColor,
+                        value: rememberMeChecked,
+                       onChanged: (value) {
+                      setState(() {
+                      rememberMeChecked = value!;
+                           });
+                           },
+                     activeColor: BbRed,
+                            //borderSide: const BorderSide(color:BbRed), 
+                            
+
+                           ),
+                           normalText(text: "Se souvenir de moi ", color: BbRed,size: 10.0),
+                         
+
+                         ],
+                       ),
+                       Column(children: [
+                          const SizedBox(
+              height: 5.0,
             ),
+            const Center(child: Text("J'ai déjà un compte?",style: TextStyle(fontWeight: FontWeight.w600),)),
+            const SizedBox(
+              height: 2.0,
+            ),
+            Center(
+              child: CupertinoButton(
+                onPressed: () {
+                  Get.to(() =>  LoginScreen(userType: widget.userType,));
+
+                },
+                child: Text(
+                  "Login",
+                  style: TextStyle(color: BbRed,fontWeight: FontWeight.w500),
+                ),
+              ),
+            ),
+                       ],),
+                      10.heightBox,
+                      
+                      SizedBox(height: 15),
+                      Center(
+                        child: SizedBox(
+                          height: 45,
+                          width: context.screenWidth - 107,
+                          child: ourButton(
+                            color: BbRed,
+                            title: "Créer un compte",
+                           onPress: () async {
+                bool isVaildated = signUpVaildation(
+                    emailController.text, passwordController.text, nameController.text, phoneController.text);
+                if (isVaildated) {
+                  bool isLogined = await FirebaseAuthHelper.instance
+                      .signUp(nameController.text, emailController.text, passwordController.text, /*phoneController.text,addressController.text,CardNumberController.text,*/context);
+                  if (isLogined) {
+                   /* Routes.instance.pushAndRemoveUntil(
+                        widget: const CustomBottomBar(), context: context);*/
+                        Get.to(() =>  BienvenueScreen(userType: widget.userType,));
+                  }
+                }
+              },
+                          ),
+                        ),
+                      ),
+                    ]
+                  ).box
+                  .width(300)
+                  .height(680)
+                  .color(Colors.white.withOpacity(0.5))
+                 // .border(color: whiteColor)
+                  .rounded
+                  //.shadowMd
+                  .padding(const EdgeInsets.all(8))
+                  .make(),
+                ),
+              
+              ],
+            )
           ),
         ),
       ),

@@ -10,7 +10,8 @@ import '../SalonsScreen/SalonListScreen.dart';
 import 'dart:async';
 
 class BienvenueScreen extends StatefulWidget {
-  const BienvenueScreen({Key? key}) : super(key: key);
+  final String userType;
+  const BienvenueScreen({Key? key, required this.userType}) : super(key: key);
 
   @override
   State<BienvenueScreen> createState() => _BienvenueScreenState();
@@ -27,53 +28,51 @@ class _BienvenueScreenState extends State<BienvenueScreen> {
     Timer(Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => SalonListScreen()),
-      );
+        MaterialPageRoute(builder: (context) => SalonListScreen(userType:widget.userType),
+      ));
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Container(
-          height: double.infinity,
-          width: 500,
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("assets/bgimg.jpg"),
-              fit: BoxFit.cover,
-            ),
+      body: Container(
+        height: double.infinity,
+        width: 500,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/bgimg.jpg"),
+            fit: BoxFit.cover,
           ),
-          child: SingleChildScrollView(
-            child: Center(
-              child: Column(
-                children: [
-                  const SizedBox(height: 100),
-                  Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 50),
-                        boldText(text: "Bienvenue ", color: BbRed, size: 50),
-                        boldText(text: "Chez ", color: BbRed, size: 50),
-                        Image.asset(
-                          "assets/madamen.png",
-                          fit: BoxFit.contain,
-                          height: 300,
-                          width: 900,
-                        ).box.make(),
-                      ],
-                    ).box
-                        .width(300)
-                        .height(500)
-                    .color(Colors.white.withOpacity(0.5))
-                        .rounded
-                        .padding(const EdgeInsets.all(8))
-                        .make(),
-                  ),
-                ],
-              ),
+        ),
+        child: SingleChildScrollView(
+          child: Center(
+            child: Column(
+              children: [
+                const SizedBox(height: 100),
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 50),
+                      boldText(text: "Bienvenue ", color: BbRed, size: 50),
+                      boldText(text: "Chez ", color: BbRed, size: 50),
+                      Image.asset(
+                        "assets/madamen.png",
+                        fit: BoxFit.contain,
+                        height: 300,
+                        width: 900,
+                      ).box.make(),
+                    ],
+                  ).box
+                      .width(300)
+                      .height(500)
+                  .color(Colors.white.withOpacity(0.5))
+                      .rounded
+                      .padding(const EdgeInsets.all(8))
+                      .make(),
+                ),
+              ],
             ),
           ),
         ),
