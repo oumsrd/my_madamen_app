@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 
@@ -80,15 +81,19 @@ class _SingleFavouriteItemState extends State<SingleFavouriteItem> {
                             ),
                           ],
                         ),
-                        Text(
-                         // "\$${widget.singleSalon.price.toString()}",
-                         "50 M",
-                          style: const TextStyle(
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.orange
-                          ),
-                        ),
+                        Row(children: [
+                           Icon(
+      Icons.star,
+      size: 20,
+      color: Colors.orange,
+    ),
+    Text(
+      "5",
+   style: GoogleFonts.arsenal(textStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.w600,color: Colors.orange)),
+
+    ),
+                        ],)
+                       
                       ],
                     ),
                   ],

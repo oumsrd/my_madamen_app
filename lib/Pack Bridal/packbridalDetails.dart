@@ -1,15 +1,20 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
 import 'package:my_madamn_app/Consts/colors.dart';
 import 'package:my_madamn_app/widgets_common/our_button.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:intl/intl.dart';
 
+import '../SalonsScreen/check_out.dart';
+import '../models/salon_model/salon_model.dart';
+
 class PackBridalDetails extends StatefulWidget {
   final String salonId;
+  final String userType;
 
-  PackBridalDetails({required this.salonId});
+  PackBridalDetails({required this.salonId, required this.userType});
 
   @override
   _PackBridalDetailsState createState() => _PackBridalDetailsState();
@@ -20,38 +25,83 @@ class _PackBridalDetailsState extends State<PackBridalDetails> {
   TextEditingController timeController = TextEditingController();
 
   Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(Duration(days: 365)),
-    );
-    if (picked != null && picked != selectedDate) {
-      setState(() {
-        selectedDate = picked;
-      dateController.text = DateFormat('yyyy-MM-dd').format(picked); // Format the date
-      });
-    }
+  final DateTime? picked = await showDatePicker(
+    context: context,
+    initialDate: DateTime.now(),
+    firstDate: DateTime.now(),
+    lastDate: DateTime.now().add(Duration(days: 365)),
+  );
+  if (picked != null && picked != selectedDate) {
+    setState(() {
+      selectedDate = picked;
+      dateController.text = DateFormat('yyyy-MM-dd').format(picked); // Format the date as 'yyyy-MM-dd'
+    });
   }
+}
+
 TimeOfDay? selectedTime;
 
-  Future<void> _selectTime(BuildContext context) async {
+ Future<void> _selectTime(BuildContext context) async {
   final TimeOfDay? picked = await showTimePicker(
     context: context,
     initialTime: TimeOfDay.now(),
   );
   if (picked != null && picked != selectedTime) {
+    // Créez un objet DateTime avec l'heure et les minutes de TimeOfDay
+    final now = DateTime.now();
+    final selectedDateTime = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      picked.hour,
+      picked.minute,
+    );
+
     setState(() {
       selectedTime = picked;
-      timeController.text = picked.format(context);
+      timeController.text = DateFormat('HH:mm').format(selectedDateTime); // Format the time as 'HH:mm'
+      
     });
   }
+  
 }
+Future<SalonModel> getSalonModel(String salonId) async {
+  try {
+    String collectionName="";
+    widget.userType=="salons"? collectionName="salons":"freelancers";
+    final salonDoc = await FirebaseFirestore.instance.collection(collectionName).doc(salonId).get();
+    if (salonDoc.exists) {
+      final salonData = salonDoc.data() as Map<String, dynamic>;
+
+      // Créez un modèle de salon à partir des données récupérées
+      final salonModel = SalonModel(
+        // Assurez-vous d'adapter ces champs à votre modèle SalonModel
+        name: salonData['name'],
+        address: salonData['address'],
+        image: salonData['image'],
+        CartNumber: salonData['cartNumber'],
+        email: salonData['email'],
+        phone: salonData['phone'],
+        isFavourite: false,
+        id: salonData['id'],
+        // Ajoutez d'autres champs si nécessaire
+      );
+
+      return salonModel;
+    }
+  } catch (e) {
+    print("Erreur lors de la récupération du modèle de salon : $e");
+  }
+  return SalonModel(image: [], isFavourite: false, id: "id", name: "name", email: "email", phone: "phone", address: "address", CartNumber: "CartNumber"); // Retournez null en cas d'erreur ou si le salon n'existe pas
+}
+
+
 
   String? selectedPackName;
   List<dynamic>? selectedServices;
-  String? selectedPrice;
+  String selectedPrice="";
   DateTime? selectedDate;
+List<Map<String, dynamic>> selectedsubServices = [];
 
   
   @override
@@ -89,7 +139,12 @@ TimeOfDay? selectedTime;
                     final packName = packbridalData['packName'] as String;
                     final services = packbridalData['services'] as List<dynamic>;
                     final price = packbridalData['price'] as String;
-
+    selectedsubServices = services.map((service) => {
+      'name': service,
+      'price':"price"
+      // Ajoutez d'autres champs si nécessaire
+    }).toList();
+  
                     return InkWell(
                       onTap: () {
                         setState(() {
@@ -154,34 +209,43 @@ TimeOfDay? selectedTime;
                               width: context.screenWidth - 200,
                               child: ourButton(
                                 onPress: () async {
+                               SalonModel   salonModel=await getSalonModel(widget.salonId);
                                   print(selectedServices);
+                                  num Price = 0.0;
+                                  Price = double.parse(selectedPrice); // Convertit une String en double
                                   // Handle reservation logic here
-                                  if (selectedDate != null && selectedTime != null) {
+                                 try{ if (selectedDate != null && selectedTime != null) {
                                     // Construct the data and save it to Firestore
+                                   String reservationId=FirebaseFirestore.instance.collection('reservations').doc().id;
                                     final reservationData = {
-                                      'id':FirebaseFirestore.instance.collection('reservations').doc().id,
-                                      'date': selectedDate!.toString(), // Format as needed
+                                     'id':reservationId,
+                                      'date': dateController.text, // Format as needed
                                       'salonId': widget.salonId,
-                                      'salonName': await FirebaseFirestore.instance.collection('salons').doc(widget.salonId).get().then((doc) => doc['name']),
-                                      'selectedServices': selectedServices/*!.map((service) {
+                                      'salonName': await FirebaseFirestore.instance.collection(widget.userType=="salons"?'salons':'freelancers').doc(widget.salonId).get().then((doc) => doc['name']),
+                                      'selectedServices': selectedServices,
+                                      'isNotified':false
+                                      /*!.map((service) {
+                                        
                                         return {
                                           'name': service['name'],
                                           'price': selectedPrice,
                                         };
                                       }).toList()*/,
-                                     'time': selectedTime!.format(context),
-                                     'totalePrice': selectedPrice,
+                                     'time': timeController.text,
+                                     'totalePrice': Price,
                                      'userId': FirebaseAuth.instance.currentUser?.uid, 
                                      'userName': FirebaseAuth.instance.currentUser?.displayName, // Replace with actual user name
                                     };
-
-                                    FirebaseFirestore.instance.collection('reservations').add(reservationData);
-
+                                      print(FirebaseFirestore.instance.collection('reservations').doc().id);
+                                      print("**************");
+                                    print(reservationId);
+                                    FirebaseFirestore.instance.collection('reservations').doc(reservationId).set(reservationData);
+                                    
                                     // Clear the selections and controllers
                                     setState(() {
                                       selectedPackName = null;
                                       selectedServices = null;
-                                      selectedPrice = null;
+                                      selectedPrice = "";
                                       selectedDate = null;
                                       selectedTime = null;
                                       dateController.clear();
@@ -189,14 +253,31 @@ TimeOfDay? selectedTime;
                                     });
 
                                     // Show a success message to the user
-                                    ScaffoldMessenger.of(context).showSnackBar(
+                                    await ScaffoldMessenger.of(context).showSnackBar(
+                                     //  await Get.to(() => Checkout( reservationData: reservationData,
+                                      //selectedServices: widget.selectedServices,
+                                      //totalPrice: widget.selectedPrice,singleSalon:widget.salonModel,reservationId:reservationRef.id ,/*passer des données si nécessaire*/));
                                       SnackBar(content: Text('Réservation effectuée avec succès')),
                                     );
+                                    Navigator.of(context).push(
+  MaterialPageRoute(
+    builder: (context) => Checkout(
+      reservationData: reservationData,
+      selectedServices: selectedsubServices,
+      totalPrice: Price,
+      singleSalon:salonModel, 
+      reservationId: reservationId, // Assurez-vous d'avoir reservationId défini dans votre code
+      // Vous pouvez également transmettre d'autres données si nécessaire
+    ),
+  ),
+);
+
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(content: Text('Veuillez sélectionner une date et une heure')),
                                     );
                                   }
+                                 }catch(e) {print(e);}
                                 },
                                 title: 'Réserver',
                               ),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:my_madamn_app/Consts/colors.dart';
-import 'package:my_madamn_app/servicedomicile/ServiceDomicile.dart';
 import 'package:my_madamn_app/widgets_common/AppBar_widget.dart';
 import 'package:provider/provider.dart';
+import '../SalonsScreen/SalonInfo.dart';
 import '../firebase_helper/firebase_firestore_helper/firebase_firestore.dart';
 import '../models/salon_model/salon_model.dart';
 import '../provider/app_provider.dart';
@@ -11,6 +11,8 @@ import 'freelancerdetails.dart';
 
 
 class FreelancersList extends StatefulWidget {
+  final String userType;
+  FreelancersList(this.userType);
   @override
    
   State<FreelancersList> createState() => _FreelancersListState();
@@ -24,11 +26,11 @@ class _FreelancersListState extends State<FreelancersList> {
   void initState() {
     AppProvider appProvider = Provider.of<AppProvider>(context, listen: false);
     appProvider.getUserInfoFirebase();
-     getSalonList();
+     getFreelancerList();
     super.initState();
   }
 
-  void getSalonList() async {
+  void getFreelancerList() async {
     setState(() {
       isLoading = true;
     });
@@ -114,7 +116,7 @@ class _FreelancersListState extends State<FreelancersList> {
                       ),
                       itemBuilder: (ctx, index) {
                         SalonModel singleProduct = searchList[index];
-                        return StyledSalonCard(singleProduct);
+                        return StyledSalonCard(singleProduct,widget.userType);
                       },
                     )
                   : salonModelList.isEmpty
@@ -132,7 +134,7 @@ class _FreelancersListState extends State<FreelancersList> {
                           ),
                           itemBuilder: (ctx, index) {
                             SalonModel singleProduct = salonModelList[index];
-                            return StyledSalonCard(singleProduct);
+                            return StyledSalonCard(singleProduct,widget.userType);
                           },
                         ),
            const SizedBox(height: 12.0),
@@ -159,9 +161,10 @@ class _FreelancersListState extends State<FreelancersList> {
 
 
 class StyledSalonCard extends StatelessWidget {
+  final String userType;
   final SalonModel salon;
 
-  StyledSalonCard(this.salon);
+  StyledSalonCard(this.salon, this.userType);
 
   @override
   Widget build(BuildContext context) {
@@ -196,7 +199,7 @@ class StyledSalonCard extends StatelessWidget {
             child: OutlinedButton(
              onPressed: () {
             // Naviguez vers la page de détails du salon avec les informations pertinentes()
-            Navigator.push(  context,  MaterialPageRoute( builder: (context) => FreelancerDetails(salon),  ), );
+            Navigator.push(  context,  MaterialPageRoute( builder: (context) =>  SalonInfo(salon,userType),  ), );
           },
               child: Text("Consulter le salon",style: TextStyle(color: BbRed),),
             ),

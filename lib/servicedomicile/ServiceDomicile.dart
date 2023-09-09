@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'package:my_madamn_app/Consts/colors.dart';
 import 'package:my_madamn_app/servicedomicile/freelancerdetails.dart';
 import 'package:my_madamn_app/widgets_common/AppBar_widget.dart';
@@ -219,4 +219,4 @@ class StylistCard extends StatelessWidget {
     );
   }
 }
-
+*/

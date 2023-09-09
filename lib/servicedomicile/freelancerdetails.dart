@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_madamn_app/Consts/colors.dart';
 import 'package:my_madamn_app/models/salon_model/salon_model.dart';
@@ -213,4 +213,4 @@ class _FreelancerDetailsState extends State<FreelancerDetails> {
       ),
     );
   }
-}
+}*/

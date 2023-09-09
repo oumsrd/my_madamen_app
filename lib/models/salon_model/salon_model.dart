@@ -51,19 +51,29 @@ class SalonModel {
         
       };
 
-  SalonModel copyWith({
+ SalonModel copyWith({
     String? name,
-    image,
-    address,
-  }) =>
-      SalonModel(
-        id: id,
-        name: name ?? this.name,
-        email: email,
-        image: image ?? this.image,
-        isFavourite: isFavourite,
-        phone: phone,
-        address: address,
-        CartNumber: CartNumber,
-      );
+    String? image, // Assurez-vous que le type de image est correct (String).
+    String? address,
+  }) {
+    // Créez une nouvelle liste d'images en copiant l'ancienne.
+    List<String> newImage = List.from(this.image);
+
+    // Si la nouvelle image n'est pas nulle, remplacez le premier élément de newImage.
+    if (image != null) {
+      newImage[0] = image;
+    }
+
+    return SalonModel(
+      id: id,
+      name: name ?? this.name,
+      email: email,
+      image: newImage,
+      isFavourite: isFavourite,
+      phone: phone,
+      address: address ?? this.address,
+      CartNumber: CartNumber,
+    );
+  }
+
 }

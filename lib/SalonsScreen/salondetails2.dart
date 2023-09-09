@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 import '../Consts/colors.dart';
+import '../constants/constants.dart';
 import '../models/salon_model/salon_model.dart';
 import '../widgets_common/AppBar_widget.dart';
 import '../widgets_common/our_button.dart';
@@ -11,9 +12,7 @@ import 'ReserverSalon.dart';
 class SalonDetails2 extends StatefulWidget {
  final String userType;
   final SalonModel salonModel;
-
   SalonDetails2(this.salonModel, this.userType);
-
   @override
   State<SalonDetails2> createState() => _SalonDetails2State();
 }
@@ -24,15 +23,15 @@ class _SalonDetails2State extends State<SalonDetails2> {
   bool isSelected = false;
   Future<String> goToReserverSalon() async {
   final reservationRef = FirebaseFirestore.instance.collection('reservations').doc();
- List selectedServiceNames = selectedServices.map((service) => service['name']).toList();
+ //List selectedServiceNames = selectedServices.map((service) => service['name']).toList();
 
-  await reservationRef.set({
+  /*await reservationRef.set({
     'id': reservationRef.id,
     'salonName': widget.salonModel.name,
     'selectedServices':selectedServiceNames,
     'totalPrice': totalPrice.toString() ,
     'salonId': widget.salonModel.id,
-  });
+  });*/
   return reservationRef.id; 
 }
 
@@ -42,9 +41,8 @@ void toggleSubService(Map<String, dynamic> subServiceData) {
   print(selectedServices);
   setState(() {
     if (isSelected) {
-      selectedServices.remove(subServiceData);
+      selectedServices.add(subServiceData);
             isSelected = !isSelected; 
-// Toggle the isSelected value
 
     } else {
       selectedServices.add(subServiceData);
@@ -52,10 +50,8 @@ void toggleSubService(Map<String, dynamic> subServiceData) {
           updateTotalPrice();
 
           ();
- // Toggle the isSelected value
 
     }
-    //isSelected = !isSelected; // Toggle the isSelected value
     print(selectedServices);
     print(totalPrice);
   });
@@ -108,85 +104,101 @@ List<Map<String, dynamic>> Services=[];
             child: Padding(
               
               padding: EdgeInsets.symmetric(horizontal: 30),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  ServiceList(
-                    widget.salonModel,
-                   toggleSubService,
-                   Services,
-                   isSelected
-                   ),
-                  const SizedBox(height: 10),
-                  Center(
-                    child: Text(
-                      'Prix total:',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(height: 30,),
+                    ServiceList(
+                      widget.salonModel,
+                     toggleSubService,
+                     Services,
+                     isSelected,
+                     widget.userType
+                     ),
+                    const SizedBox(height: 10),
+                    Center(
+                      child: Text(
+                        'Prix total:',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        ),
                       ),
                     ),
-                  ),
-                  Center(
+                    Center(
+                      child: Text(
+                        '${totalPrice} DH',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                     Center(
                     child: Text(
-                      '${totalPrice} DH',
+                      'Services sélectionnés:',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
                       ),
                     ),
                   ),
-                   Center(
-                  child: Text(
-                    'Services sélectionnés:',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: selectedServices.length,
+                    itemBuilder: (context, index) {
+                      Map<String, dynamic> selectedSubService = selectedServices[index];
+                      return ListTile(
+                        title: Text(selectedSubService['name']),
+                        subtitle: Text('${selectedSubService['price']} DH'),
+                      );
+                    },
                   ),
-                ),
-                ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: selectedServices.length,
-                  itemBuilder: (context, index) {
-                    Map<String, dynamic> selectedSubService = selectedServices[index];
-                    return ListTile(
-                      title: Text(selectedSubService['name']),
-                      subtitle: Text('${selectedSubService['price']} DH'),
-                    );
-                  },
-                ),
-                  //const SizedBox(height: 10),
-                  Center(
-                    child: SizedBox(
-                      height: 45,
-                      width: context.screenWidth - 107,
-                      child: ourButton(
-                        color: BbRed,
-                        title: "Poursuivre",
-                        onPress: () async {
-             String reservationId = await goToReserverSalon();
-             print(reservationId);
-
-     Get.to(() => ReserverSalon(
-      userType: widget.userType,
-      reservationId: reservationId,
-     salonModel: widget.salonModel,
-      selectedServices: selectedServices,
-      totalPrice: totalPrice,
-    ));
-    
-                          print(isSelected);
-                          print(selectedServices);
-                        //  Get.to(() => ReserverSalon(
-                                //selectedServices: selectedServices,
-                                //totalPrice: totalPrice,
-                             // ));
-                        },
+                    //const SizedBox(height: 10),
+                    Center(
+                      child: SizedBox(
+                        height: 45,
+                        width: context.screenWidth - 107,
+                        child: ourButton(
+                          color: BbRed,
+                          title: "Poursuivre",
+                          onPress: () async {
+                            print(widget.salonModel.name);
+                            QuerySnapshot<Map<String, dynamic>> doc =await FirebaseFirestore.instance.collectionGroup('services').get();
+                            print(doc);
+                            //for();
+                             List<String> serviceNames = [];
+              
+                    // Parcourir les documents pour extraire les noms de service
+                    doc.docs.forEach((serviceDoc) {
+                      String serviceName = serviceDoc.get('name'); // Remplacez 'name' par le champ approprié dans votre document.
+                      serviceNames.add(serviceName);
+                    });
+                    print(serviceNames);
+                           String reservationId = await goToReserverSalon();
+                           print(reservationId);
+              
+                   Get.to(() => ReserverSalon(
+                    userType: widget.userType,
+                    reservationId: reservationId,
+                   salonModel: widget.salonModel,
+                    selectedServices: selectedServices,
+                    totalPrice: totalPrice,
+                  ));
+                  
+                            print(isSelected);
+                            print(selectedServices);
+                          //  Get.to(() => ReserverSalon(
+                                  //selectedServices: selectedServices,
+                                  //totalPrice: totalPrice,
+                               // ));
+                          },
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -201,16 +213,19 @@ class ServiceList extends StatelessWidget {
   final Function(Map<String, dynamic>) onSubServiceToggle;
   final List<Map<String, dynamic>> selectedServices;
   final bool isSelected;
+  final String userType;
 
 
-  ServiceList(this.salon, this.onSubServiceToggle, this.selectedServices, this.isSelected);
+  ServiceList(this.salon, this.onSubServiceToggle, this.selectedServices, this.isSelected, this.userType);
+
+  
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
       stream: FirebaseFirestore.instance
-          .collection('salons')
-          .doc(salon.id)
+       .collection(userType=="freelancer" ? "freelancers": userType=="salons" ? "salons": "")
+         .doc(salon.id)
           .collection('services')
           .snapshots(),
       builder: (context, snapshot) {
@@ -286,7 +301,7 @@ class SubSubServiceList extends StatelessWidget {
 
           //  bool isSubServiceSelected = selectedServices.contains(subServiceData);
           
-
+            print(subserviceDoc);
            return Container(
               color: 
               //isSubServiceSelected
@@ -329,8 +344,8 @@ class SubSubServiceList extends StatelessWidget {
                      // for(var subserv in subServiceData)
                      print("*******");
                      print(selectedServices);
-                                          print("*******");
-
+                     print("*******");
+                     showMessage("Service a bien été ajouté");
                      print(subServiceData);
                       onSubServiceToggle(subServiceData);
                       },

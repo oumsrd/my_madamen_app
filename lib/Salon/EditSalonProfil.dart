@@ -9,17 +9,21 @@ import 'package:my_madamn_app/widgets_common/our_button.dart';
 import 'package:provider/provider.dart';
 
 import '../../provider/app_provider.dart';
+import '../Consts/colors.dart';
+import '../models/salon_model/salon_model.dart';
 import '../models/user_model/user_model.dart';
 import '../widgets_common/AppBar_widget.dart';
+import '../widgets_common/menu.dart';
 
-class EditProfile extends StatefulWidget {
-  const EditProfile({super.key});
+class EditSalonProfile extends StatefulWidget {
+  final String userType;
+  const EditSalonProfile({super.key, required this.userType});
 
   @override
-  State<EditProfile> createState() => _EditProfileState();
+  State<EditSalonProfile> createState() => _EditSalonProfileState();
 }
 
-class _EditProfileState extends State<EditProfile> {
+class _EditSalonProfileState extends State<EditSalonProfile> {
   File? image;
   void takePicture() async {
     XFile? value = await ImagePicker()
@@ -41,17 +45,17 @@ class _EditProfileState extends State<EditProfile> {
     String pic="";
      // Initialisation des données du salon
 Future<void > fetchUserData() async {
- try{ String userId = FirebaseAuth.instance.currentUser!.uid;
-print(userId);
+ try{ String salonId = FirebaseAuth.instance.currentUser!.uid;
+print(salonId);
   DocumentSnapshot<Map<String, dynamic>> salonSnapshot =
-      await FirebaseFirestore.instance.collection("users").doc(userId).get();
+      await FirebaseFirestore.instance.collection( widget.userType=="salons"?  "salons": "freelancers").doc(salonId).get();
       if(salonSnapshot.exists){setState(() {  
         email=salonSnapshot['email'];
         name=salonSnapshot['name'];
       //  address=salonSnapshot['address'];
        // phone=salonSnapshot['phone'];
         //cartNumber=salonSnapshot['cartNumber'];
-        pic=salonSnapshot['image'];
+        pic=salonSnapshot['image'][0];
          salonData = salonSnapshot.data()!;
          print(name);
 });}
@@ -71,10 +75,12 @@ catch (e){print(e);}
       context,
     );
     return Scaffold(
-      appBar:PreferredSize(
-        preferredSize: Size.fromHeight(kToolbarHeight),
-        child: CustomAppBar(),
+      appBar:AppBar(
+        title: Text( "Modifier le profil"),
+        backgroundColor: BbRed,
       ),
+            drawer: Menu(context,widget.userType),
+      
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         children: [
@@ -110,9 +116,28 @@ catch (e){print(e);}
           ourButton(
             title: "Update",
             onPress: () async {
-              UserModel userModel = appProvider.getUserInformation
-                  .copyWith(name: textEditingController.text);
-              appProvider.updateUserInfoFirebase(context, userModel, image);
+              //SalonModel salonModel = appProvider.getSalonInformation
+                //  .copyWith(name: textEditingController.text);
+                 String salonId = FirebaseAuth.instance.currentUser!.uid;
+    final salonDoc = await FirebaseFirestore.instance.collection( widget.userType=="salons"?  "salons": "freelancers").doc(salonId).get();
+  
+      final salonData = salonDoc.data() as Map<String, dynamic>;
+
+      // Créez un modèle de salon à partir des données récupérées
+      final salonModel = SalonModel(
+        // Assurez-vous d'adapter ces champs à votre modèle SalonModel
+        name: salonData['name'],
+        address: salonData['address'],
+        image: salonData['image'],
+        CartNumber: salonData['cartNumber'],
+        email: salonData['email'],
+        phone: salonData['phone'],
+        isFavourite: false,
+        id: salonData['id'],
+        // Ajoutez d'autres champs si nécessaire
+      );
+    
+              appProvider.updateSalonInfoFirebase(context, salonModel, image!);
             },
           ),
         ],

@@ -29,7 +29,7 @@ showLoaderDialog(BuildContext context) {
             ),
             Container(
                 margin: const EdgeInsets.only(left: 7),
-                child: const Text("Loading...")),
+                child: const Text("Chargement...")),
           ],
         ),
       );
@@ -47,46 +47,46 @@ showLoaderDialog(BuildContext context) {
 String getMessageFromErrorCode(String errorCode) {
   switch (errorCode) {
     case "ERROR_EMAIL_ALREADY_IN_USE":
-      return "Email already used. Go to login page.";
+      return "Email déjà utilisé. Aller à la page de connexion.";
     case "account-exists-with-different-credential":
-      return "Email already used. Go to login page.";
+      return "Email déjà utilisé. Aller à la page de connexion.";
     case "email-already-in-use":
-      return "Email already used. Go to login page.";
+      return "Email déjà utilisé. Aller à la page de connexion.";
     case "ERROR_WRONG_PASSWORD":
     case "wrong-password":
-      return "Wrong Password ";
+      return "Mot de passe incorrect. ";
     case "ERROR_USER_NOT_FOUND":
-      return "No user found with this email.";
+      return "Aucun utilisateur trouvé avec cet e-mail.";
     case "user-not-found":
-      return "No user found with this email.";
+      return "Aucun utilisateur trouvé avec cet e-mail.";
     case "ERROR_USER_DISABLED":
-      return "User disabled.";
+      return "Utilisateur désactivé.";
     case "user-disabled":
-      return "User disabled.";
+      return "Utilisateur désactivé.";
     case "ERROR_TOO_MANY_REQUESTS":
-      return "Too many requests to log into this account.";
+      return "Trop de demandes pour se connecter à ce compte.";
     case "operation-not-allowed":
-      return "Too many requests to log into this account.";
+      return "Trop de demandes pour se connecter à ce compte.";
     case "ERROR_OPERATION_NOT_ALLOWED":
-      return "Too many requests to log into this account.";
+      return "Trop de demandes pour se connecter à ce compte.";
     case "ERROR_INVALID_EMAIL":
-      return "Email address is invalid.";
+      return "L’adresse e-mail n’est pas valide.";
     case "invalid-email":
-      return "Email address is invalid.";
+      return "L’adresse e-mail n’est pas valide..";
     default:
-      return "Login failed. Please try again.";
+      return "Échec de la connexion. Veuillez réessayer.";
   }
 }
 
 bool loginVaildation(String email, String password) {
   if (email.isEmpty && password.isEmpty) {
-    showMessage("Both Fields are empty");
+    showMessage("Les deux champs sont vides");
     return false;
   } else if (email.isEmpty) {
-    showMessage("Email is Empty");
+    showMessage("L’e-mail est vide");
     return false;
   } else if (password.isEmpty) {
-    showMessage("Password is Empty");
+    showMessage("Le mot de passe est vide");
     return false;
   } else {
     return true;
@@ -96,19 +96,19 @@ bool loginVaildation(String email, String password) {
 bool signUpVaildation(
     String email, String password, String name, String phone) {
   if (email.isEmpty && password.isEmpty && name.isEmpty && phone.isEmpty) {
-    showMessage("All Fields are empty");
+    showMessage("Tous les champs sont vides");
     return false;
   } else if (name.isEmpty) {
-    showMessage("Name is Empty");
+    showMessage("Le nom est vide");
     return false;
   } else if (email.isEmpty) {
-    showMessage("Email is Empty");
+    showMessage("L'e-mail est vide");
     return false;
   } else if (phone.isEmpty) {
-    showMessage("Phone is Empty");
+    showMessage("Le téléphone est vide");
     return false;
   } else if (password.isEmpty) {
-    showMessage("Password is Empty");
+    showMessage("Le mot de passe est vide");
     return false;
   } else {
     return true;

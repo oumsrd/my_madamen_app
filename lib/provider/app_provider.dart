@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import '../constants/constants.dart';
 import '../firebase_helper/firebase_firestore_helper/firebase_firestore.dart';
 import '../firebase_helper/firebase_storage_helper/firebase_storage_helper.dart';
-import '../models/product_model/product_model.dart';
 import '../models/salon_model/salon_model.dart';
 import '../models/user_model/user_model.dart';
 
@@ -83,33 +82,23 @@ void getSalonInfoFirebase() async {
       Navigator.of(context, rootNavigator: true).pop();
       Navigator.of(context).pop();
     }
-    showMessage("Successfully updated profile");
+    showMessage("Profil mis à jour avec succès");
 
     notifyListeners();
   }
   /////////////////update salon information
 Future<void> updateSalonInfoFirebase(
-    BuildContext context, SalonModel salonModel,   List<File> imageFiles,
+    BuildContext context, SalonModel salonModel,   File imageFile,
 ) async {
   try {
     print(00000000000000000000000000000);
     showLoaderDialog(context);
-    List<String> imageUrls = [];
- for (File file in imageFiles) {
-      String imageUrl = await FirebaseStorageHelper.instance.uploadUserImage(file);
-      imageUrls.add(imageUrl);
-    }
-   salonModel = salonModel.copyWith(image: imageUrls);
-
-
-    /*if (file != null) {
-      print("AAAAAAAAAAA");
-      String imageUrl = await FirebaseStorageHelper.instance.uploadUserImage(file);
-      print("BBBBBBBBBB");
-      salonModel = salonModel.copyWith(image: imageUrl);
-      print("CCCCCCCCCCC");
-    }*/
-
+   // List<String> imageUrls = [];
+ //for (File file in imageFiles) {
+      String imageUrl = await FirebaseStorageHelper.instance.uploadUserImage(imageFile);
+    //  imageUrls.add(imageUrl);
+   // }
+   salonModel = salonModel.copyWith(image: imageUrl);
     await FirebaseFirestore.instance
         .collection("salons")
         .doc(salonModel.id)

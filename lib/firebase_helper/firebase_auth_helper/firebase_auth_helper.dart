@@ -11,7 +11,31 @@ class FirebaseAuthHelper {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Stream<User?> get getAuthChange => _auth.authStateChanges();
+ Future<bool> verifyOldPassword(String oldPassword) async {
+    try {
+      final user = _auth.currentUser;
 
+      if (user != null) {
+        // Créez une instance de l'authentification par e-mail et mot de passe
+        final AuthCredential credential = EmailAuthProvider.credential(
+          email: user.email!,
+          password: oldPassword,
+        );
+
+        // Réauthentifiez l'utilisateur avec l'ancien mot de passe
+        await user.reauthenticateWithCredential(credential);
+
+        // Si la réauthentification réussit, le mot de passe est correct
+        return true;
+      } else {
+        // L'utilisateur n'est pas connecté
+        return false;
+      }
+    } catch (e) {
+      // Une erreur s'est produite, ce qui signifie que l'ancien mot de passe est incorrect
+      return false;
+    }
+  }
   Future<bool> login(
       String email, String password, BuildContext context) async {
     try {

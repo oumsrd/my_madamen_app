@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:my_madamn_app/Consts/const.dart';
 import 'package:provider/provider.dart';
 
 
@@ -18,12 +19,12 @@ class StripeHelper {
   static StripeHelper instance = StripeHelper();
 
   Map<String, dynamic>? paymentIntent;
-  Future<void> makePayment( List<Map<String, dynamic>> selectedServices,String amount, BuildContext context) async {
+  Future<void> makePayment( List<Map<String, dynamic>> selectedServices,String amount, BuildContext context,String reservationId)async {
     try {
-      paymentIntent = await createPaymentIntent(amount, 'USD');
+      paymentIntent = await createPaymentIntent(amount, 'MAD');
 
       var gpay = const PaymentSheetGooglePay(
-          merchantCountryCode: "US", currencyCode: "USD", testEnv: true
+          merchantCountryCode: "MA", currencyCode: "MAD", testEnv: true
           );
 
       //STEP 2: Initialize Payment Sheet
@@ -33,27 +34,27 @@ class StripeHelper {
                   paymentIntentClientSecret: paymentIntent![
                       'client_secret'], //Gotten from payment intent
                   style: ThemeMode.light,
-                  merchantDisplayName: 'Sabir Dev',
+                  merchantDisplayName: 'Oumeyma',
                   googlePay: gpay))
           .then((value) {});
 
       //STEP 3: Display Payment sheet
-      displayPaymentSheet(selectedServices,context,amount);
+      displayPaymentSheet(selectedServices,context,amount,reservationId);
     } catch (err) {
       showMessage(err.toString());
     }
   }
 
-  displayPaymentSheet(List<Map<String, dynamic>> selectedServices,BuildContext context,String price,) async {
+  displayPaymentSheet(List<Map<String, dynamic>> selectedServices,BuildContext context,String price,String reservationId)async {
     AppProvider appProvider = Provider.of<AppProvider>(context, listen: false);
     try {
       await Stripe.instance.presentPaymentSheet().then((value) async {
-      bool value = await FirebaseFirestoreHelper.instance.uploadSalonReserveFirebase(  selectedServices, context, "Paid",price);
+      bool value = await FirebaseFirestoreHelper.instance.uploadSalonReserveFirebase(  selectedServices, context, "Paid",price,reservationId);
 
       //  appProvider.clearBuyProduct();
         if (value) {
           Future.delayed(const Duration(seconds: 2), () {
-                                  Get.to(() => SalonListScreen(userType : "client"));
+                  Get.to(() => SalonListScreen(userType : "salons"));
           }
           );
         }
@@ -74,7 +75,7 @@ class StripeHelper {
         Uri.parse('https://api.stripe.com/v1/payment_intents'),
         headers: {
           'Authorization':
-              'Bearer sk_test_51MWx8OAVMyklfe3C3gP4wKOhTsRdF6r1PYhhg1PqupXDITMrV3asj5Mmf0G5F9moPL6zNfG3juK8KHgV9XNzFPlq00wmjWwZYA',
+              'Bearer $SECRET_KEY',
           'Content-Type': 'application/x-www-form-urlencoded'
         },
         body: body,
@@ -88,7 +89,6 @@ class StripeHelper {
     try {
       String cardNumber = ''; // Initialize with empty string
       String expirationDate = ''; // Initialize with empty string
-      // You can similarly collect other card information like CVV, etc.
 
       // Show a dialog to collect card information
       await showDialog(
@@ -110,9 +110,7 @@ class StripeHelper {
                   onChanged: (value) {
                     expirationDate = value;
                   },
-                ),
-                // Add more fields as needed (e.g., CVV)
-              ],
+                ),              ],
             ),
             actions: [
               ElevatedButton(

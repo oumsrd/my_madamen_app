@@ -196,7 +196,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 //signInWithGoogle();
                                  Navigator.pushReplacement(
                                        context,
-                              MaterialPageRoute(builder: (context) => BienvenueScreen(userType: widget.userType,)),
+                              MaterialPageRoute(builder: (context) => BienvenueScreen(userType: "salons",)),
                                    );} ,
                               imagePath: "assets/google.png"),
                               SizedBox(width: 25,),
@@ -206,7 +206,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 //signInWithFacebook();
                                  Navigator.pushReplacement(
                                        context,
-                              MaterialPageRoute(builder: (context) => BienvenueScreen(userType: widget.userType,)),
+                              MaterialPageRoute(builder: (context) => BienvenueScreen(userType: "salons",)),
                                    );} ,
                               imagePath: "assets/facebook.png"),
                           ],
@@ -229,7 +229,7 @@ class _LoginScreenState extends State<LoginScreen> {
       DocumentSnapshot<Map<String, dynamic>> userSnapshot = await FirebaseFirestore.instance.collection("users").doc(FirebaseAuth.instance.currentUser?.uid).get();
       if (userSnapshot.exists) {
       // L'utilisateur appartient à la collection "users"
-      Get.to(() => BienvenueScreen(userType: "client",));
+      Get.to(() => BienvenueScreen(userType: "salons",));
       } else {
       // Vérification de l'appartenance de l'utilisateur à la collection "freelancers"
       DocumentSnapshot<Map<String, dynamic>> freelancerSnapshot = await FirebaseFirestore.instance.collection("freelancers").doc(FirebaseAuth.instance.currentUser?.uid).get();

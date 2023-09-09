@@ -56,15 +56,13 @@ catch (e){print(e);}
 @override
   void initState() {
     fetchUserData();
-    // TODO: implement initState
     super.initState();
   }
+
+
   @override
   Widget build(BuildContext context) {
-    print("proooovider");
-  
- 
-    
+    print("proooovider");  
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(kToolbarHeight),
@@ -75,12 +73,12 @@ catch (e){print(e);}
           Expanded(
             child: Column(
               children: [
-             //   appProvider.getUserInformation.image == null
-               //     ? const Icon(
-                 //       Icons.person_outline,
-                   //     size: 100,
-                     // )
-                   // : 
+            image == null
+                    ? const Icon(
+                       Icons.person_outline,
+                        size: 100,
+                      )
+                    : 
                     CircleAvatar(
                         backgroundImage:
                             NetworkImage(image),

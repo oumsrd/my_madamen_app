@@ -2,11 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
-
 import '../../constants/constants.dart';
-import '../../models/category_model/category_model.dart';
-import '../../models/order_model/order_model.dart';
-import '../../models/product_model/product_model.dart';
 import '../../models/salon_model/salon_model.dart';
 import '../../models/service_model/service_model.dart';
 import '../../models/subservice_model/subservice.dart';
@@ -16,22 +12,7 @@ class FirebaseFirestoreHelper {
   
   static FirebaseFirestoreHelper instance = FirebaseFirestoreHelper();
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
-  Future<List<CategoryModel>> getCategories() async {
-    try {
-      QuerySnapshot<Map<String, dynamic>> querySnapshot =
-          await _firebaseFirestore.collection("categories").get();
-
-      List<CategoryModel> categoriesList = querySnapshot.docs
-          .map((e) => CategoryModel.fromJson(e.data()))
-          .toList();
-
-      return categoriesList;
-    } catch (e) {
-      showMessage(e.toString());
-      print("je suis dans getCategories");
-      return [];
-    }
-  }//************Freelancers********************* */
+  //************Freelancers********************* */
   Future<List<SalonModel>> getFreelancers() async {
     try {
       QuerySnapshot<Map<String, dynamic>> querySnapshot =
@@ -50,10 +31,12 @@ class FirebaseFirestoreHelper {
     }
   }
   //*************Salons****************
-Future<List<SalonModel>> getSalons() async {
+Future<List<SalonModel>> getSalons( String userType) async {
     try {
+      String collectionName='';
+      userType=="salons" ? collectionName='salons' : userType=="freelancer"? collectionName="freelancers": "Error";
       QuerySnapshot<Map<String, dynamic>> querySnapshot =
-          await _firebaseFirestore.collection("salons").get();
+          await _firebaseFirestore.collection(collectionName).get();
 
       List<SalonModel> salonsList = querySnapshot.docs
           .map((e) => SalonModel.fromJson(e.data()))
@@ -124,9 +107,10 @@ Future<List<ServiceModel>> getServices() async {
   }
 Future<List<Map<String, dynamic>>> getServicesFromFirestore(String userType)async {
   try {
-     String collectionName = userType == "freelancer"
-        ? "freelancers"
-        : "salons";
+     String collectionName = "";
+     userType == "freelancer"
+        ? collectionName = "freelancers"
+        :collectionName =  "salons";
     QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore.instance
         .collection(collectionName)
         .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -212,29 +196,29 @@ Future<List<Map<String, dynamic>>> getServicesFromFirestore(String userType)asyn
  
 
  Future<bool> uploadSalonReserveFirebase(
-      List<Map<String, dynamic>> selectedServices, BuildContext context, String payment,String totalPrice) async {
+      List<Map<String, dynamic>> selectedServices, BuildContext context, String payment,String totalPrice,String reservationId) async {
     try {
       showLoaderDialog(context);
       DocumentReference documentReference = _firebaseFirestore
           .collection("usersReservations")
-          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .doc(reservationId)
           .collection("userreservations")
-          .doc();
-      DocumentReference admin = _firebaseFirestore.collection("userReservation").doc();
-
+          .doc(reservationId);
+      DocumentReference admin = _firebaseFirestore.collection("userReservation").doc(reservationId);
+   print(reservationId);
       admin.set({
         "selectedServices":selectedServices,
         "status": "Pending",
-        "totalPrice": totalPrice,
+        "totalePrice": totalPrice,
         "payment": payment,
-        "reservationId": admin.id,
+        "reservationId": reservationId,
       });
       documentReference.set({
         "services": selectedServices,
         "status": "Pending",
-        "totalPrice": totalPrice,
+        "totalePrice": totalPrice,
         "payment": payment,
-        "reservationId": documentReference.id,
+        "reservationId": reservationId,
       });
 
       Navigator.of(context, rootNavigator: true).pop();

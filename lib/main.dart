@@ -1,28 +1,28 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:my_madamn_app/Consts/const.dart';
+import 'package:my_madamn_app/ReservationHistorique/reservationhistorique.dart';
 import 'package:my_madamn_app/SalonsScreen/SalonListScreen.dart';
 import 'package:my_madamn_app/auth_screen/Login/login_screen.dart';
 import 'package:my_madamn_app/provider/app_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import 'Salon/ReservationListe.dart';
+import 'NotificationApi.dart';
+import 'package:timezone/data/latest.dart' as tzdata;
 
+final navigatorKey=GlobalKey<NavigatorState>();
 
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  Stripe.publishableKey =
-      "pk_test_51MWx8OAVMyklfe3CsjEzA1CiiY0XBTlHYbZ8jQlGtVFIwQi4aNeGv8J1HUw4rgSavMTLzTwgn0XRlwoTVRFXyu2h00mRUeWmAf";
-  await Firebase.initializeApp();
-
-  FirebaseFirestore.instance.settings = const Settings(
-    persistenceEnabled: true,
-    cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
-  );
+     WidgetsFlutterBinding.ensureInitialized();
+  tzdata.initializeTimeZones();
+  Stripe.publishableKey=stripePublishableKey;
+  await Stripe.instance.applySettings();
+ await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -34,14 +34,34 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+final navigatorKey = GlobalKey<NavigatorState>();
+void onClickedNotification(NotificationResponse? payload) {
+  print("onClickedNotification called");
+  if (navigatorKey.currentState != null) {
+    navigatorKey.currentState?.push(MaterialPageRoute(builder: (context) => HistoriqueReservation()));
+  }
+}
+
+    void listenNotifications()=>NotificationApi.onNotifications.stream.listen(onClickedNotification);
+
   String userType='';
   var auth = FirebaseAuth.instance;
   var isLoggedin = false;
-
+  
   @override
   void initState() {
     checkUser();
     super.initState();
+    NotificationApi.init(initScheduled: true);
+    listenNotifications();
+    
+ /*   NotificationApi.showScheduledNotification(
+      title: 'Dinner',
+      body: 'Today at 6 pm',
+      payload: 'dinner_6pm',
+      scheduledDate: DateTime.now().add(Duration(seconds: 12))
+    );*/
+ 
     
   }
 
@@ -76,18 +96,14 @@ class _MyAppState extends State<MyApp> {
 
     if (isClient) {
       userType = "client";
-    //return UserType.client;
   } else if (isSalon) {
          print("55ggggggggg");
     userType = "salons";
-    //return UserType.salons;
   } else if (isFreelancer) {
     print("66666666666666666666666666");
     userType = "freelancer";
-    //return UserType.freelancer;
   } else {
         print("66666666666666666666666666");
-   // return UserType.client; // Type par défaut
   }
   }
 
@@ -96,20 +112,22 @@ class _MyAppState extends State<MyApp> {
     return ChangeNotifierProvider<AppProvider>(
       create: (context) => AppProvider(),
       child: GetMaterialApp(
+       navigatorKey: navigatorKey,
         debugShowCheckedModeBanner: false,
         title: 'madamen app',
 
       home: 
-  // MyAppPreferences.loggedInUserType == UserType.client
   (userType=="client" && isLoggedin)
-      ? SalonListScreen(userType: "client",)
+      ? SalonListScreen(userType: "salons",)
      :( userType=="salons" && isLoggedin) ? 
      ReservationList(userType: "salons"): 
      (userType=="freelancer" && isLoggedin) ? 
      ReservationList(userType: "freelancer")
-     : LoginScreen(userType: "",)
+     : LoginScreen(userType: "salons",),
+  
       ),
       // );
     );
   }
+  
 }

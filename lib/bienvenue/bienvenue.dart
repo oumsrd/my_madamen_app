@@ -25,10 +25,10 @@ class _BienvenueScreenState extends State<BienvenueScreen> {
   }
 
   void redirectToSalonListScreen() {
-    Timer(Duration(seconds: 3), () {
+   Timer(Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => SalonListScreen(userType:widget.userType),
+        MaterialPageRoute(builder: (context) => SalonListScreen(userType:"salons"),
       ));
     });
   }
@@ -54,14 +54,14 @@ class _BienvenueScreenState extends State<BienvenueScreen> {
                   padding: const EdgeInsets.all(5.0),
                   child: Column(
                     children: [
-                      const SizedBox(height: 50),
-                      boldText(text: "Bienvenue ", color: BbRed, size: 50),
-                      boldText(text: "Chez ", color: BbRed, size: 50),
+                     // const SizedBox(height: 50),
+                     // boldText(text: "Bienvenue ", color: BbRed, size: 50),
+                     // boldText(text: "Chez ", color: BbRed, size: 50),
                       Image.asset(
-                        "assets/madamen.png",
+                        "assets/bienvenue.png",
                         fit: BoxFit.contain,
-                        height: 300,
-                        width: 900,
+                      //  height: 300,
+                        //width: 900,
                       ).box.make(),
                     ],
                   ).box

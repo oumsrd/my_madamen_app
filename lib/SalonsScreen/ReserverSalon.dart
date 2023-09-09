@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:my_madamn_app/Consts/colors.dart';
 import 'package:velocity_x/velocity_x.dart';
 import '../Reservation/ReservationSuccess.dart';
-import '../ReservationHistorique/check_out.dart';
+import 'check_out.dart';
 import '../models/salon_model/salon_model.dart';
 import '../widgets_common/AppBar_widget.dart';
 import '../widgets_common/menu_boutton.dart';
@@ -131,19 +131,26 @@ bool checkReservation(DateTime? date, TimeOfDay? time) {
     };
     final reservationRef =
         FirebaseFirestore.instance.collection('reservations').doc(widget.reservationId);
+ List selectedServiceNames = widget.selectedServices.map((service) => service['name']).toList();
 
-    await reservationRef.update({
+    await reservationRef.set({
+       'id': reservationRef.id,
+    'salonName': widget.salonModel.name,
+    'selectedServices':selectedServiceNames,
+    'totalePrice': widget.totalPrice.toString() ,
+    'salonId': widget.salonModel.id,
       'date': dateFormatter.format(selectedDate!),
       'time': DateFormat.Hm().format(selectedDateTime),
       'userId': FirebaseAuth.instance.currentUser?.uid,
       'userName': FirebaseAuth.instance.currentUser?.displayName,
+      'isNotified':false
     });
 
     print(widget.reservationId);
     //await Get.to(() => ReservationSuccess(/*passer des données si nécessaire*/));
         await Get.to(() => Checkout( reservationData: reservationData,
       selectedServices: widget.selectedServices,
-      totalPrice: widget.totalPrice,singleSalon:widget.salonModel/*passer des données si nécessaire*/));
+      totalPrice: widget.totalPrice,singleSalon:widget.salonModel,reservationId:reservationRef.id ,/*passer des données si nécessaire*/));
 
   }
 }

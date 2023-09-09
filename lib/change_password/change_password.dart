@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_madamn_app/Consts/colors.dart';
@@ -18,7 +20,39 @@ class _ChangePasswordState extends State<ChangePassword> {
   bool isShowPassword = true;
   TextEditingController newpassword = TextEditingController();
   TextEditingController confirmpassword = TextEditingController();
+ TextEditingController oldPassword = TextEditingController();
+ Map<String, dynamic> salonData = {};
+    String email="";
+    String name="";
+    String address="";
+    String phone="";
+    String cartNumber="";
+    String image="";
+     // Initialisation des données du salon
+Future<void > fetchUserData() async {
+ try{ String userId = FirebaseAuth.instance.currentUser!.uid;
+print(userId);
+  DocumentSnapshot<Map<String, dynamic>> salonSnapshot =
+      await FirebaseFirestore.instance.collection("users").doc(userId).get();
+      if(salonSnapshot.exists){setState(() {  
+        email=salonSnapshot['email'];
+        name=salonSnapshot['name'];
+      //  address=salonSnapshot['address'];
+       // phone=salonSnapshot['phone'];
+        //cartNumber=salonSnapshot['cartNumber'];
+        image=salonSnapshot['image'];
+         salonData = salonSnapshot.data()!;
+});}
 
+    print(salonData);}
+catch (e){print(e);}
+
+}
+@override
+  void initState() {
+    fetchUserData();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,6 +68,17 @@ class _ChangePasswordState extends State<ChangePassword> {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         children: [
+          TextFormField(
+  controller: oldPassword,
+  obscureText: isShowPassword,
+  decoration: InputDecoration(
+    hintText: "Old Password",
+    prefixIcon: const Icon(
+      Icons.password_sharp,
+    ),
+  ),
+),
+
           TextFormField(
             controller: newpassword,
             obscureText: isShowPassword,
@@ -71,21 +116,31 @@ class _ChangePasswordState extends State<ChangePassword> {
           const SizedBox(
             height: 36.0,
           ),
-          ourButton(
-            title: "Update",
-            onPress: () async {
-              if (newpassword.text.isEmpty) {
-                showMessage("New Password is empty");
-              } else if (confirmpassword.text.isEmpty) {
-                showMessage("Confirm Password is empty");
-              } else if (confirmpassword.text == newpassword.text) {
-                FirebaseAuthHelper.instance
-                    .changePassword(newpassword.text, context);
-              } else {
-                showMessage("Confirm Password is not match");
-              }
-            },
-          ),
+         ourButton(
+  title: "Update",
+  onPress: () async {
+    if (oldPassword.text.isEmpty) {
+      showMessage("Old Password is empty");
+    } else if (newpassword.text.isEmpty) {
+      showMessage("New Password is empty");
+    } else if (confirmpassword.text.isEmpty) {
+      showMessage("Confirm Password is empty");
+    } else if (confirmpassword.text == newpassword.text) {
+      // Vérifier l'ancien mot de passe ici
+      bool isOldPasswordCorrect = await FirebaseAuthHelper.instance.verifyOldPassword(oldPassword.text);
+
+      if (isOldPasswordCorrect) {
+        // L'ancien mot de passe est correct, vous pouvez changer le mot de passe ici
+        FirebaseAuthHelper.instance.changePassword(newpassword.text, context);
+      } else {
+        showMessage("Old Password is incorrect");
+      }
+    } else {
+      showMessage("Confirm Password does not match");
+    }
+  },
+),
+
         ],
       ),
     );

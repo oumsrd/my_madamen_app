@@ -33,7 +33,7 @@ class _SalonListScreenState extends State<SalonListScreen> {
     setState(() {
       isLoading = true;
     });
-    salonModelList = await FirebaseFirestoreHelper.instance.getSalons();
+    salonModelList = await FirebaseFirestoreHelper.instance.getSalons(widget.userType);
 
     salonModelList.shuffle();
     if (mounted) {
@@ -87,11 +87,11 @@ class _SalonListScreenState extends State<SalonListScreen> {
             ),
             SizedBox(height: 24.0),
             !isSearched()
-              ? const Padding(
+              ? Padding(
                   padding: EdgeInsets.only(top: 12.0),
                   child: Text(
-                    "Liste des salons",
-                    style: TextStyle(
+                  widget.userType=="salons" ?  "Liste des salons" : "Liste des freelancers",
+                    style: const TextStyle(
                       fontSize: 18.0,
                       fontWeight: FontWeight.bold,
                     ),
@@ -205,7 +205,7 @@ class StyledSalonCard extends StatelessWidget {
               ),
             );
           },
-              child: Text("Consulter le salon",style: TextStyle(color: BbRed),),
+              child: Text( userType=="freelancer"?" Consulter le freelancer": "Consulter le salon",style: TextStyle(color: BbRed),),
             ),
           ),
         ],

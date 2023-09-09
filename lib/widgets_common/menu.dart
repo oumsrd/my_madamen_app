@@ -58,7 +58,7 @@ Widget Menu(BuildContext context,String userType){
               
                       Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => AddService(userType: "")), // Replace with your login screen widget
+                      MaterialPageRoute(builder: (context) => AddService(userType: userType)), // Replace with your login screen widget
                  ); 
 
 
@@ -69,7 +69,7 @@ Widget Menu(BuildContext context,String userType){
               FirebaseAuthHelper.instance.signOut();
                       Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => LoginScreen(userType:"",)), // Replace with your login screen widget
+                      MaterialPageRoute(builder: (context) => LoginScreen(userType:userType,)), // Replace with your login screen widget
                  ); 
 
 

@@ -6,14 +6,14 @@ import 'package:my_madamn_app/widgets_common/AppBar_widget.dart';
 import 'package:velocity_x/velocity_x.dart';
 import '../widgets_common/menu_boutton.dart';
 
-class SalonsList extends StatefulWidget {
-  const SalonsList({super.key});
+class FreelancerPack extends StatefulWidget {
+  const FreelancerPack({super.key});
 
   @override
-  State<SalonsList> createState() => _SalonsListState();
+  State<FreelancerPack> createState() => _FreelancerPackState();
 }
 
-class _SalonsListState extends State<SalonsList> {
+class _FreelancerPackState extends State<FreelancerPack> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,7 +47,7 @@ class _SalonsListState extends State<SalonsList> {
                     ),
                    FutureBuilder<QuerySnapshot>(
   future: FirebaseFirestore.instance
-      .collection('salons')
+      .collection('freelancers')
       .get(),
   builder: (context, salonSnapshot) {
     if (salonSnapshot.connectionState == ConnectionState.waiting) {
@@ -225,7 +225,7 @@ class StylistCard extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            PackBridalDetails(salonId: salonId,userType: "salons",),
+                            PackBridalDetails(salonId: salonId,userType: "freelancer",),
                       ),
                     );
                   },

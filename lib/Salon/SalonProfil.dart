@@ -10,6 +10,7 @@ import 'package:velocity_x/velocity_x.dart';
 import '../auth_screen/Login/login_screen.dart';
 import '../widgets_common/menu.dart';
 import 'AddServices.dart';
+import 'EditSalonProfil.dart';
 
 class SalonProfilScreen extends StatefulWidget {
   final String userType;
@@ -63,7 +64,7 @@ catch (e){print(e);}
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Salon Profile"),
+        title: Text(  widget.userType=="salons"?  "Salon Profile": "Freelancer Profile"),
         backgroundColor: BbRed,
       ),
             drawer: Menu(context,widget.userType),
@@ -109,10 +110,10 @@ catch (e){print(e);}
                 height: 40,
                 width: 150,
                 child: ourButton(
-                  title: "Edit Profile",
+                  title: "Modifier Profile",
                   onPress: () {
-                    // Naviguez vers l'écran d'édition du profil du salon
-                 //   Navigator.push(  context, MaterialPageRoute(builder: (context) => EditSalonProfilScreen() ),  );
+                   //  Naviguez vers l'écran d'édition du profil du salon
+                   Navigator.push(  context, MaterialPageRoute(builder: (context) => EditSalonProfile(userType: widget.userType,) ),  );
                   },
                 ),
               ),

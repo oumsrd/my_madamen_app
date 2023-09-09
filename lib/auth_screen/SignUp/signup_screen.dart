@@ -308,7 +308,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   if (isLogined) {
                    /* Routes.instance.pushAndRemoveUntil(
                         widget: const CustomBottomBar(), context: context);*/
-                        Get.to(() =>  BienvenueScreen(userType: widget.userType,));
+                        Get.to(() =>  BienvenueScreen(userType: "salons",));
                   }
                 }
               },

@@ -2,13 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:my_madamn_app/auth_screen/Login/login_screen.dart';
 import 'package:my_madamn_app/Salon/salonSignupDetails.dart';
 import 'package:velocity_x/velocity_x.dart';
 import '../../Consts/colors.dart';
 import '../../constants/constants.dart';
-import '../../stripe_helper/stripe_helper.dart';
 import '../../widgets_common/normal_text.dart';
 import '../../widgets_common/our_button.dart';
 class Signup extends StatefulWidget {
@@ -163,6 +163,39 @@ class _SignupState extends State<Signup> {
                        // normalText(text:"Mot de passe ",color:BbRed)
                         ]),
                       15.heightBox,
+                        Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 18),
+                          child: TextFormField(
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter.digitsOnly,    // allow only  digits
+                                          CreditCardNumberFormater(),                // custom class to format entered data from textField
+                                          LengthLimitingTextInputFormatter(19)       // restrict user to enter max 16 characters
+                                        ],
+                                        controller: CardNumberController,
+                                        keyboardType: TextInputType.number,
+                                        decoration: InputDecoration(
+                             border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(color:BbRed), // Couleur du contour
+                            ),                                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: BbRed), // Couleur du contour lorsqu'en focus
+                            ),
+                                            enabledBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(color: BbRed),
+                                              borderRadius: BorderRadius.circular(8.0),
+                                            ),
+                                            hintText: "Enter numéro de carte bancaire",
+                                            prefixIcon:  Padding(
+                                              padding: EdgeInsets.only(right:8.0),
+                                              child: Icon(Icons.credit_card),
+                                            ),
+                                          filled: true,
+                                          fillColor: Colors.white
+                                        ),
+                                      ),
+                        ),
+                        15.heightBox,
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 18),
                         child: TextFormField(
@@ -227,20 +260,6 @@ class _SignupState extends State<Signup> {
                           ),
                         ),
                       ),
-                        15.heightBox,
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 18),
-                        child:  ourButton(
-            title: "Entrer les détails de carte bancaire",
-            onPress: () async {
-              
-                
-              //  await StripeHelper.instance .makePayment("200".toString(), context);
-              
-            },
-          )
-                      ),
-                      
                        Row(
                          children: [
                            2.widthBox,
@@ -345,34 +364,27 @@ Get.to(() => SalonSignupDetails(userType: widget.userType));
     );
   }
 }
-class PaymentForm extends StatelessWidget {
+class CreditCardNumberFormater extends TextInputFormatter{
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(16.0),
-      color: Colors.white,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('Informations bancaires'),
-          TextFormField(
-            decoration: InputDecoration(labelText: 'Numéro de carte'),
-          ),
-          TextFormField(
-            decoration: InputDecoration(labelText: 'Date d\'expiration'),
-          ),
-          TextFormField(
-            decoration: InputDecoration(labelText: 'Code de sécurité'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              // Ajoutez ici la logique pour traiter les informations bancaires
-            },
-            child: Text('Payer'),
-          ),
-        ],
-      ),
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    if(newValue.selection.baseOffset == 0){
+      return newValue;
+    }
+    String enteredData = newValue.text;   // get data enter by used in textField
+    StringBuffer buffer = StringBuffer();
+    for(int i = 0;i <enteredData.length;i++){
+      // add each character into String buffer
+      buffer.write(enteredData[i]);
+      int index = i + 1;
+      if(index % 4 == 0 && enteredData.length != index){
+        // add space after 4th digit
+        buffer.write(" ");
+      }
+    }
+   
+    return  TextEditingValue(
+      text: buffer.toString(),   // final generated credit card number
+      selection: TextSelection.collapsed(offset: buffer.toString().length) // keep the cursor at end
     );
   }
 }
-

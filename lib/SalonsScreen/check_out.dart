@@ -11,41 +11,63 @@ import 'package:velocity_x/velocity_x.dart';
 
 import '../../provider/app_provider.dart';
 import '../../stripe_helper/stripe_helper.dart';
-import '../SalonsScreen/SalonListScreen.dart';
+import '../NotificationApi.dart';
+import 'SalonListScreen.dart';
 import '../models/salon_model/salon_model.dart';
 
 class Checkout extends StatefulWidget {
+  final String reservationId;
   final SalonModel singleSalon;
     final Map<String, dynamic> reservationData;
   final List<Map<String, dynamic>> selectedServices;
   final num totalPrice;
-  const Checkout({super.key, required this.singleSalon, required this.reservationData, required this.selectedServices, required this.totalPrice});
+  const Checkout({super.key, required this.singleSalon, required this.reservationData, required this.selectedServices, required this.totalPrice, required this.reservationId});
 
   @override
   State<Checkout> createState() => _CheckoutState();
 }
 
 class _CheckoutState extends State<Checkout> {
-  Future<void> saveReservationData() async {
-    AppProvider appProvider = Provider.of<AppProvider>(context, listen: false);
-    
-    Map<String, dynamic> reservation = {
-      "salonName": widget.singleSalon.name,
-      'services': widget.selectedServices,
-      'totalPrice': widget.totalPrice,
-      'date': widget.reservationData['date'],
-      'time': widget.reservationData['time'],
-      // Ajoutez d'autres informations que vous souhaitez enregistrer
-    };
+  Future<void> _scheduleNotificationForSalon(String userId) async {
+  final QuerySnapshot<Map<String, dynamic>> reservationsSnapshot =
+      await FirebaseFirestore.instance
+          .collection('reservations')
+          .where('userId', isEqualTo: userId)
+          .where('isNotified', isEqualTo: false)
+          .get();
+    print(reservationsSnapshot);
+  for (final QueryDocumentSnapshot<Map<String, dynamic>> reservationSnapshot
+      in reservationsSnapshot.docs) {
+    final String dateString = reservationSnapshot['date'] as String;
+    print(dateString);
+    final String timeString = reservationSnapshot['time'] as String;
+   print(timeString);
+    // Convert the date and time to DateTime objects
+    final List<String> dateParts = dateString.split('-');
+    final List<String> timeParts = timeString.split(':');
+    final int year = int.parse(dateParts[0]);
+    final int month = int.parse(dateParts[1]);
+    final int day = int.parse(dateParts[2]);
+    final int hours = int.parse(timeParts[0]);
+    final int minutes = int.parse(timeParts[1]);
 
-    try {
-      String userId = FirebaseAuth.instance.currentUser!.uid; // Obtenez l'ID de l'utilisateur connecté à partir de votre système d'authentification
-      await FirebaseFirestore.instance.collection('userReservations').doc(userId).collection('reservations').add(reservation);
-      print('Reservation data saved successfully.');
-    } catch (error) {
-      print('Error saving reservation data: $error');
-    }
+    final DateTime reservationTime = DateTime(year, month, day, hours, minutes);
+    print(reservationTime);
+    print("heure maintenannt est ${DateTime.now()}" );
+NotificationApi.showScheduledNotification(
+      title: 'Confirmation de réservation',
+      body: 'Avez vous bénéficié du service ?',
+      payload: 'Avez vous bénéficié du service',
+      scheduledDate: reservationTime.add(const Duration(seconds: 10))
+    );
+
+     await FirebaseFirestore.instance
+          .collection('reservations')
+          .doc(reservationSnapshot.id)
+          .update({'isNotified': true});
   }
+}
+ 
   int groupValue = 1;
   @override
   Widget build(BuildContext context) {
@@ -147,12 +169,13 @@ class _CheckoutState extends State<Checkout> {
                 child: ourButton(
                   title: "Continues",
                   onPress: () async {
-              
+                    _scheduleNotificationForSalon(FirebaseAuth.instance.currentUser!.uid);
+              print(widget.reservationId);
                     if (groupValue == 1) {
-                      bool value=await FirebaseFirestoreHelper.instance.uploadSalonReserveFirebase(widget.selectedServices,context,"Paiement sur place",widget.totalPrice.toString());
+                      bool value=await FirebaseFirestoreHelper.instance.uploadSalonReserveFirebase(widget.selectedServices,context,"Paiement sur place",widget.totalPrice.toString(),widget.reservationId);
                       if(value){
                          Future.delayed(const Duration(seconds: 2), () {
-                                 Get.to(() => SalonListScreen(userType : "client"));
+                                 Get.to(() => SalonListScreen(userType : "salons"));
 
                     });
                       }
@@ -162,9 +185,9 @@ class _CheckoutState extends State<Checkout> {
                       int value = widget.totalPrice
                           .round()
                           .toInt();
-                      String totalPrice = (10*value).toString();
+                      String totalPrice = (100*value).toString();
                       await StripeHelper.instance
-                          .makePayment(widget.selectedServices,totalPrice.toString(), context);
+                          .makePayment(widget.selectedServices,totalPrice, context,widget.reservationId);
                     }
                   },
                 ),

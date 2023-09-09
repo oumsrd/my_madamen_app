@@ -156,65 +156,70 @@ List<ServiceModel> serviceModelList = [];
     ),
   ),
 ),
-20.heightBox,
+12.heightBox,
 
             Center(
-              child: ourButton(
-  title: "Ajouter",
-  onPress: () async {
-
-    try {
-      var filename = path.basename(selectedImage!.path);
-                var destination =
-                   'services/${FirebaseAuth.instance.currentUser?.displayName}/$filename';
-              Reference ref =
-                  FirebaseStorage.instance.ref().child(destination);
-                await ref.putFile(File(selectedImage!.path));
-                String nImageRef = await ref.getDownloadURL();
-                     serviceImageController.text=nImageRef;
-                     String collectionName = widget.userType == "freelancer"
-        ? "freelancers"
-        : "salons";
-      DocumentReference serviceDocumentReference = FirebaseFirestore.instance
-          .collection(collectionName)
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .collection("services")
-          .doc();
-
-      await serviceDocumentReference.set({
-        'nombre_personnels': nombre_personnelsController.text,
-        'name': serviceNameController.text,
-        'image': serviceImageController.text,
-      });
-
-      for (SubServiceModel item in addedSubServices) {
-        await serviceDocumentReference.collection("subservices").add({
-          'nombre_personnels': item.nombre_personnels,
-          'name': item.name,
-          'image': item.image,
-          'price': item.price,
-        });
-      }
-         ServiceModel newService = ServiceModel(
-          name: serviceNameController.text,
-          nombre_personnels: nombre_personnelsController.text,
-          image: serviceImageController.text,
-        );
-
-        setState(() {
-          serviceModelList.add(newService);
-            serviceNameController.clear();
-      nombre_personnelsController.clear();
-      serviceImageController.clear();
-      addedSubServices.clear(); // Add the new service to the list
-        });
-
-       showMessage("Votre service a été ajouté avec succès");
-    } catch (e) {
-      print(e);
-    }
-  },
-),
+              child: SizedBox(
+                 height: 45,
+                width: context.screenWidth - 107,
+                child: ourButton(
+                title: "Ajouter",
+                onPress: () async {
+              
+                  try {
+                    var filename = path.basename(selectedImage!.path);
+                  var destination =
+                     'services/${FirebaseAuth.instance.currentUser?.displayName}/$filename';
+                Reference ref =
+                    FirebaseStorage.instance.ref().child(destination);
+                  await ref.putFile(File(selectedImage!.path));
+                  String nImageRef = await ref.getDownloadURL();
+                       serviceImageController.text=nImageRef;
+                       String collectionName = "";
+                       widget.userType == "freelancer"
+                      ?  collectionName = "freelancers"
+                      : widget.userType == "salons" ? collectionName =  "salons": collectionName = "";
+                    DocumentReference serviceDocumentReference = FirebaseFirestore.instance
+                        .collection(collectionName)
+                        .doc(FirebaseAuth.instance.currentUser!.uid)
+                        .collection("services")
+                        .doc();
+              
+                    await serviceDocumentReference.set({
+                      'nombre_personnels': nombre_personnelsController.text,
+                      'name': serviceNameController.text,
+                      'image': serviceImageController.text,
+                    });
+              
+                    for (SubServiceModel item in addedSubServices) {
+                      await serviceDocumentReference.collection("subservices").add({
+                        'nombre_personnels': item.nombre_personnels,
+                        'name': item.name,
+                        'image': item.image,
+                        'price': item.price,
+                      });
+                    }
+                       ServiceModel newService = ServiceModel(
+                        name: serviceNameController.text,
+                        nombre_personnels: nombre_personnelsController.text,
+                        image: serviceImageController.text,
+                      );
+              
+                      setState(() {
+                        serviceModelList.add(newService);
+                          serviceNameController.clear();
+                    nombre_personnelsController.clear();
+                    serviceImageController.clear();
+                    addedSubServices.clear(); // Add the new service to the list
+                      });
+              
+                     showMessage("Votre service a été ajouté avec succès");
+                  } catch (e) {
+                    print(e);
+                  }
+                },
+              ),
+              ),
           ),
             SizedBox(height: 20),
             Expanded(
@@ -259,23 +264,7 @@ List<ServiceModel> serviceModelList = [];
     },
   ),
 ),
-            SizedBox(height: 20),
-            Center(
-              child: SizedBox(
-                height: 45,
-                width: context.screenWidth - 107,
-                child: ourButton(
-                  color: BbRed,
-                  title: "Continuer",
-                  onPress: () {
-                    
-                    print("AAAAAAAAAA");
-                   print(addedSubServices);
-
-                  },
-                ),
-              ),
-            ),
+           
           ],
         ),
       ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:my_madamn_app/Consts/colors.dart';
 import 'package:my_madamn_app/widgets_common/our_button.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 import '../widgets_common/menu.dart';
 
@@ -115,16 +116,27 @@ class _PackBridalScreenState extends State<PackBridalScreen> {
       decoration: InputDecoration(labelText: 'Nom du pack bridal'),
     ),
     SizedBox(height: 10),
-                TextFormField(
-                  controller: _servicesController,
-                  decoration: InputDecoration(labelText: 'Services'),
-                ),
-                ourButton(
-                  onPress: _addService,
-                  
-                  title: 'Ajouter un service',
-                ),
-                SizedBox(height: 10),
+              Row(
+  children: [
+    Expanded(
+      child: TextFormField(
+        controller: _servicesController,
+        decoration: InputDecoration(labelText: 'Services'),
+      ),
+    ),
+    SizedBox(width: 10), // Un espace entre le champ de texte et le bouton
+    ElevatedButton(
+        onPressed: _addService,
+          style: ButtonStyle(
+    backgroundColor: MaterialStateProperty.all<Color>(BbRed), // Remplacez "Colors.red" par votre couleur personnalisée BbRed
+  ),
+
+  child: Text('Ajouter'),
+)
+
+  ],
+),
+      SizedBox(height: 10),
                 Text('Services sélectionnés: ${_selectedServices.join(', ')}'),
                 TextFormField(
                   controller: _priceController,
@@ -140,9 +152,15 @@ class _PackBridalScreenState extends State<PackBridalScreen> {
                   },
                 ),
                 SizedBox(height: 20),
-                ourButton(
-                  onPress: _addPackToDatabase,
-                  title: 'Ajouter',
+                Center(
+                  child: SizedBox(
+                     height: 45,
+                width: context.screenWidth - 107,
+                    child: ourButton(
+                      onPress: _addPackToDatabase,
+                      title: 'Confirmer',
+                    ),
+                  ),
                 ),
                 SizedBox(height: 20),
                 Text('Packs Bridal enregistrés pour ce salon:'),

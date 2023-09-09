@@ -1,6 +1,7 @@
  import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_madamn_app/Consts/const.dart';
+import 'package:my_madamn_app/Pack%20Bridal/FreelancerPack.dart';
 import 'package:my_madamn_app/SalonsScreen/SalonListScreen.dart';
 import 'package:my_madamn_app/account_screen/account_screens.dart';
 import 'package:my_madamn_app/favourite_screen/favourite_screen.dart';
@@ -30,7 +31,7 @@ Widget MenuBoutton(BuildContext context) {
           ListTile(
             title: normalText(text: 'Accueil', color: whiteColor, size: 20),
             onTap: () {
-               Get.to(() =>SalonListScreen(userType: "client",));
+               Get.to(() =>SalonListScreen(userType: "salons",));
 
             },
           ),
@@ -47,7 +48,7 @@ Widget MenuBoutton(BuildContext context) {
             title: normalText(text: 'Service à domicile', color: whiteColor, size: 20),
             onTap: () {
               // Rediriger vers l'écran du service à domicile
-              Get.to(() => FreelancersList());
+              Get.to(() => SalonListScreen(userType: "freelancer",));
             },
           ),
           ListTile(
@@ -71,13 +72,20 @@ Widget MenuBoutton(BuildContext context) {
                Navigator.push(context,MaterialPageRoute(builder: (context) => SalonsList()), );
             },
           ),
+           ListTile(
+            title: normalText(text: 'Freelancer Pack bridal', color: whiteColor, size: 20),
+            onTap: () {
+              // Rediriger vers l'écran du pack bridal
+               Navigator.push(context,MaterialPageRoute(builder: (context) => FreelancerPack()), );
+            },
+          ),
           ListTile(
             title: normalText(text: 'Se déconnecter', color: whiteColor, size: 20),
             onTap: () {
               FirebaseAuthHelper.instance.signOut();
                       Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => LoginScreen(userType:"client",)), // Replace with your login screen widget
+                      MaterialPageRoute(builder: (context) => LoginScreen(userType:"salons",)), // Replace with your login screen widget
                  ); 
 
 
