@@ -20,7 +20,7 @@ class SalonDetails2 extends StatefulWidget {
 class _SalonDetails2State extends State<SalonDetails2> {
     List<Map<String, dynamic>> selectedServices = [];
 
-  bool isSelected = false;
+  bool isSelected = true;
   Future<String> goToReserverSalon() async {
   final reservationRef = FirebaseFirestore.instance.collection('reservations').doc();
  //List selectedServiceNames = selectedServices.map((service) => service['name']).toList();
@@ -42,11 +42,12 @@ void toggleSubService(Map<String, dynamic> subServiceData) {
   setState(() {
     if (isSelected) {
       selectedServices.add(subServiceData);
-            isSelected = !isSelected; 
+          //  isSelected = !isSelected; 
+        updateTotalPrice();
 
     } else {
       selectedServices.add(subServiceData);
-      isSelected = !isSelected;
+      //isSelected = !isSelected;
           updateTotalPrice();
 
           ();

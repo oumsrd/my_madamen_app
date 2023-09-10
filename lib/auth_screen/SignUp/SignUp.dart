@@ -75,7 +75,7 @@ class _SignupState extends State<Signup> {
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: Colors.white,
-                            hintText: "Nom du Salon",
+                            hintText: widget.userType =="salons"?"Nom du Salon":"Nom du Freelancer",
                             prefixIcon: Icon(
                   Icons.person_outline,
                 ),
@@ -295,7 +295,7 @@ class _SignupState extends State<Signup> {
                   Get.to(() =>  LoginScreen(userType: widget.userType,));
 
                 },
-                child: Text(
+                child: const Text(
                   "Login",
                   style: TextStyle(color: BbRed,fontWeight: FontWeight.w500),
                 ),
@@ -303,8 +303,8 @@ class _SignupState extends State<Signup> {
             ),
                        ],),
                       10.heightBox,
-                      
-                      SizedBox(height: 15),
+                
+                     const SizedBox(height: 15),
                       Center(
                         child: SizedBox(
                           height: 45,
@@ -316,28 +316,18 @@ class _SignupState extends State<Signup> {
                             print(widget.userType);
   bool isVaildated = signUpVaildation(
       emailController.text, passwordController.text, nameController.text, phoneController.text);
+   String userId= FirebaseFirestore.instance.collection(widget.userType == "freelancer" ? "freelancers" : "salons").doc().id;
+
   if (isVaildated) {
-    try {
-      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-      email: emailController.text,
-      password: passwordController.text,
-      );
+   Get.to(() => SalonSignupDetails(
+   userType: widget.userType,
+   id: userId,
+   name: nameController.text,
+   email: emailController.text,
+   phone: phoneController.text,
+   password: passwordController.text,
+   cartNumber: CardNumberController.text,));
 
-      // Enregistrement des données dans la collection appropriée
-      CollectionReference usersCollection = FirebaseFirestore.instance.collection(widget.userType == "freelancer" ? "freelancers" : "salons");
-      await usersCollection.doc(userCredential.user!.uid).set({
-        "id": FirebaseFirestore.instance.collection('salons').doc().id,
-      "name": nameController.text,
-      "email": emailController.text,
-      "phone": phoneController.text,
-      "cartNumber":CardNumberController.text
-      
-      });
-
-Get.to(() => SalonSignupDetails(userType: widget.userType));
-    } catch (e) {
-      print("Error creating user: $e");
-    }
   }
 },
 

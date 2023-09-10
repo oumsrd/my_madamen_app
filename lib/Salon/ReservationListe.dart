@@ -133,36 +133,68 @@ Future<void> confirmPaymentForReservation(String reservationId) async {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 10),
-Row(
-  children: [
-    CircleAvatar(
-      radius: 25,
-     backgroundImage:   NetworkImage(image)
-         
-    ),
-    SizedBox(width: 10),
-    Text(
-      '$_firstName',
-      style: TextStyle(
-        fontWeight: FontWeight.w400,
-        fontSize: 17,
+SingleChildScrollView(
+  scrollDirection: Axis.horizontal,
+  child:   Row(
+  
+    children: [
+  
+      CircleAvatar(
+  
+        radius: 25,
+  
+       backgroundImage:   NetworkImage(image)
+  
+           
+  
       ),
+  
+      SizedBox(width: 10),
+  
+      Text(
+  
+        '$_firstName',
+  
+        style: TextStyle(
+  
+          fontWeight: FontWeight.w400,
+  
+          fontSize: 17,
+  
+        ),
+  
+      ),
+  
+      SizedBox(width: 9,),
+  
+      ourButton(
+  
+    title: 'Ajouter réservation',
+  
+    onPress: () {
+  
+      print(_firstName);
+  
+      showDialog(
+  
+        context: context,
+  
+        builder: (BuildContext context) {
+  
+          return AddReservationDialog(userType: widget.userType,);
+  
+        },
+  
+      );
+  
+    },
+  
     ),
-    SizedBox(width: 9,),
-    ourButton(
-  title: 'Ajouter réservation',
-  onPress: () {
-    print(_firstName);
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AddReservationDialog(userType: widget.userType,);
-      },
-    );
-  },
-  ),
-  ],
-  ),
+  
+    ],
+  
+    ),
+),
             SizedBox(height: 20),
             Text(
               'Réservations:',
@@ -172,6 +204,12 @@ Row(
               ),
             ),
             SizedBox(height: 20),
+              _reservations.isEmpty
+              ? Expanded(
+              child: Center(
+                child: Text("Vous n'avez pas encore de réservations!"),
+              ),)
+              :
             Expanded(
               child: ListView.builder(
                 itemCount: _reservations.length,

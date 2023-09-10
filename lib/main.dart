@@ -7,6 +7,7 @@ import 'package:my_madamn_app/Consts/const.dart';
 import 'package:my_madamn_app/ReservationHistorique/reservationhistorique.dart';
 import 'package:my_madamn_app/SalonsScreen/SalonListScreen.dart';
 import 'package:my_madamn_app/auth_screen/Login/login_screen.dart';
+import 'package:my_madamn_app/bienvenue/bienvenue.dart';
 import 'package:my_madamn_app/provider/app_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:get/get.dart';
@@ -114,7 +115,7 @@ void onClickedNotification(NotificationResponse? payload) {
       child: GetMaterialApp(
        navigatorKey: navigatorKey,
         debugShowCheckedModeBanner: false,
-        title: 'madamen app',
+        title: 'APRIM',
 
       home: 
   (userType=="client" && isLoggedin)

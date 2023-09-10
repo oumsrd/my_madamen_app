@@ -18,8 +18,14 @@ import 'package:path/path.dart' as path;
 
 class SalonSignupDetails extends StatefulWidget {
  final String userType;
+ final String id;
+ final String name;
+ final String email;
+ final String password;
+ final String phone;
+ final String cartNumber;
 
-  const SalonSignupDetails({Key? key, required this.userType}) : super(key: key);
+  const SalonSignupDetails({Key? key, required this.userType, required this.id, required this.name, required this.email, required this.password, required this.phone, required this.cartNumber}) : super(key: key);
   @override
   State<SalonSignupDetails> createState() => _SalonSignupDetailsState();
 }
@@ -307,29 +313,31 @@ void takePicture() async {
         imageUrls.add(imageUrl);
       }
     }
+     try {
+      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      email: widget.email,
+      password:widget.password,
+      );
 
-    if (widget.userType == "freelancer") {
-      // Enregistrement dans la collection "freelancers"
-      await FirebaseFirestore.instance
-          .collection('freelancers')
-          .doc(FirebaseAuth.instance.currentUser?.uid)
-          .update({
-        'address': addressController.text,
-        'image': imageUrls,
+      CollectionReference usersCollection = FirebaseFirestore.instance.collection(widget.userType == "freelancer" ? "freelancers" : "salons");
+     // String userId= FirebaseFirestore.instance.collection(widget.userType == "freelancer" ? "freelancers" : "salons").doc().id;
+      await usersCollection.doc(userCredential.user!.uid).set({
+      "id":widget.id,
+      "name": widget.name,
+      "email": widget.email,
+      "phone":widget.phone,
+      "cartNumber":widget.cartNumber,
+      'address': addressController.text,
+      'image': imageUrls,
       });
-    } else {
-      // Enregistrement dans la collection "salons"
-      await FirebaseFirestore.instance
-          .collection('salons')
-          .doc(FirebaseAuth.instance.currentUser?.uid)
-          .update({
-        'address': addressController.text,
-        'image': imageUrls,
-        // ... Autres champs de données spécifiques aux salons
-      });
+    print('Data saved successfully 111!');
+
+    } catch (e) {
+      print("Error creating user: $e");
     }
 
-    print('Data saved successfully!');
+  
+    print('Data saved successfully 222!');
 
     // Naviguer vers l'écran suivant (par exemple, AddService)
 Get.to(() => ReservationList(userType:widget.userType));
