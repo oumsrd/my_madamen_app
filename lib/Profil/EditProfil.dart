@@ -4,11 +4,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:my_madamn_app/account_screen/account_screens.dart';
+import 'package:my_madamn_app/constants/constants.dart';
 import 'package:my_madamn_app/widgets_common/our_button.dart';
 import 'package:provider/provider.dart';
 
 import '../../provider/app_provider.dart';
+import '../firebase_helper/firebase_storage_helper/firebase_storage_helper.dart';
 import '../models/user_model/user_model.dart';
 import '../widgets_common/AppBar_widget.dart';
 
@@ -36,8 +41,6 @@ class _EditProfileState extends State<EditProfile> {
     String email="";
     String name="";
     String address="";
-    String phone="";
-    String cartNumber="";
     String pic="";
      // Initialisation des données du salon
 Future<void > fetchUserData() async {
@@ -48,9 +51,7 @@ print(userId);
       if(salonSnapshot.exists){setState(() {  
         email=salonSnapshot['email'];
         name=salonSnapshot['name'];
-      //  address=salonSnapshot['address'];
-       // phone=salonSnapshot['phone'];
-        //cartNumber=salonSnapshot['cartNumber'];
+     
         pic=salonSnapshot['image'];
          salonData = salonSnapshot.data()!;
          print(name);
@@ -108,13 +109,29 @@ catch (e){print(e);}
             height: 24.0,
           ),
           ourButton(
-            title: "Update",
-            onPress: () async {
-              UserModel userModel = appProvider.getUserInformation
-                  .copyWith(name: textEditingController.text);
-              appProvider.updateUserInfoFirebase(context, userModel, image);
-            },
-          ),
+  title: "Mettre à jour",
+  onPress: () async {
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      CollectionReference usersCollection =
+          FirebaseFirestore.instance.collection("users");
+
+      Map<String, dynamic> updatedData = {
+        "name": textEditingController.text,
+        "image":await FirebaseStorageHelper.instance.uploadUserImage(image!)
+      };
+      await usersCollection.doc(userId).update(updatedData); 
+      showMessage("Profil mis à jour avec succès!");   
+        await Future.delayed(Duration(seconds: 1));
+  
+  Get.to(() =>  AccountScreen());        
+      
+    } catch (error) {
+      print("Error updating user data: $error");
+    }
+  },
+),
+
         ],
       ),
     );

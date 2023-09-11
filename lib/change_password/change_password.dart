@@ -59,7 +59,7 @@ catch (e){print(e);}
       appBar: AppBar(
         backgroundColor: BbPink,
         title: const Text(
-          "Change Password",
+          "Changement de Mot de pass",
           style: TextStyle(
             color: Colors.white,
           ),
@@ -72,7 +72,7 @@ catch (e){print(e);}
   controller: oldPassword,
   obscureText: isShowPassword,
   decoration: InputDecoration(
-    hintText: "Old Password",
+    hintText: "Encien mot de pass",
     prefixIcon: const Icon(
       Icons.password_sharp,
     ),
@@ -83,7 +83,7 @@ catch (e){print(e);}
             controller: newpassword,
             obscureText: isShowPassword,
             decoration: InputDecoration(
-              hintText: "New Password",
+              hintText: "Nouveau mot de pass",
               prefixIcon: const Icon(
                 Icons.password_sharp,
               ),
@@ -107,7 +107,7 @@ catch (e){print(e);}
             controller: confirmpassword,
             obscureText: isShowPassword,
             decoration: const InputDecoration(
-              hintText: "Confrim Password",
+              hintText: "Confirmer mot de pass",
               prefixIcon: Icon(
                 Icons.password_sharp,
               ),
@@ -120,11 +120,11 @@ catch (e){print(e);}
   title: "Update",
   onPress: () async {
     if (oldPassword.text.isEmpty) {
-      showMessage("Old Password is empty");
+      showMessage("Encien mot de pass est vide");
     } else if (newpassword.text.isEmpty) {
-      showMessage("New Password is empty");
+      showMessage("Nouveau mot de pass est vide");
     } else if (confirmpassword.text.isEmpty) {
-      showMessage("Confirm Password is empty");
+      showMessage("Confirmer mot de pass est vide");
     } else if (confirmpassword.text == newpassword.text) {
       // Vérifier l'ancien mot de passe ici
       bool isOldPasswordCorrect = await FirebaseAuthHelper.instance.verifyOldPassword(oldPassword.text);
@@ -133,10 +133,10 @@ catch (e){print(e);}
         // L'ancien mot de passe est correct, vous pouvez changer le mot de passe ici
         FirebaseAuthHelper.instance.changePassword(newpassword.text, context);
       } else {
-        showMessage("Old Password is incorrect");
+        showMessage("Encien mot de passe est incorrect");
       }
     } else {
-      showMessage("Confirm Password does not match");
+      showMessage("Confirmer mot de pass n'est pas le meme");
     }
   },
 ),

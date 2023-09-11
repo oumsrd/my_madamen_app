@@ -81,7 +81,7 @@ catch (e){print(e);}
                     : 
                     CircleAvatar(
                         backgroundImage:
-                            NetworkImage(image),
+                          NetworkImage(image),
                         radius: 60,
                       ),
                 Text(

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../constants/constants.dart';
@@ -88,32 +89,29 @@ void getSalonInfoFirebase() async {
   }
   /////////////////update salon information
 Future<void> updateSalonInfoFirebase(
-    BuildContext context, SalonModel salonModel,   File imageFile,
+    BuildContext context,   Map<String, dynamic> updatedData, File image
 ) async {
   try {
-    print(00000000000000000000000000000);
-    showLoaderDialog(context);
-   // List<String> imageUrls = [];
- //for (File file in imageFiles) {
-      String imageUrl = await FirebaseStorageHelper.instance.uploadUserImage(imageFile);
-    //  imageUrls.add(imageUrl);
-   // }
-   salonModel = salonModel.copyWith(image: imageUrl);
+      List<dynamic> currentImages = updatedData["image"] ?? [];
+      if (currentImages.isNotEmpty) {
+    currentImages[0] = await FirebaseStorageHelper.instance.uploadUserImage(image!);
+  }
+
+    showLoaderDialog(context);   
     await FirebaseFirestore.instance
         .collection("salons")
-        .doc(salonModel.id)
-        .set(salonModel.toJson());
-      print("DDDDDDDDDDDD");
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .update(updatedData);
 
     Navigator.of(context, rootNavigator: true).pop();
     Navigator.of(context).pop();
 
-    showMessage("Successfully updated salon information");
+    showMessage("Informations ont mis à jour avec succès.");
 
     notifyListeners();
   } catch (e) {
     print('Error updating salon information: $e');
-    // Gérer l'erreur de manière appropriée, par exemple en affichant un message d'erreur.
+
   }
 }
 

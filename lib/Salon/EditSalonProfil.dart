@@ -4,12 +4,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:my_madamn_app/Salon/SalonProfil.dart';
 import 'package:my_madamn_app/widgets_common/our_button.dart';
 import 'package:provider/provider.dart';
 
 import '../../provider/app_provider.dart';
 import '../Consts/colors.dart';
+import '../constants/constants.dart';
+import '../firebase_helper/firebase_storage_helper/firebase_storage_helper.dart';
 import '../models/salon_model/salon_model.dart';
 import '../models/user_model/user_model.dart';
 import '../widgets_common/AppBar_widget.dart';
@@ -114,30 +119,27 @@ catch (e){print(e);}
             height: 24.0,
           ),
           ourButton(
-            title: "Update",
-            onPress: () async {
-              //SalonModel salonModel = appProvider.getSalonInformation
-                //  .copyWith(name: textEditingController.text);
-                 String salonId = FirebaseAuth.instance.currentUser!.uid;
-    final salonDoc = await FirebaseFirestore.instance.collection( widget.userType=="salons"?  "salons": "freelancers").doc(salonId).get();
-  
-      final salonData = salonDoc.data() as Map<String, dynamic>;
+            title: "Mettre à jour",
+             onPress: () async {
+              try {
+                String salonId = FirebaseAuth.instance.currentUser!.uid;
+                String imageUrl = await FirebaseStorageHelper.instance.uploadUserImage(image!);
 
-      // Créez un modèle de salon à partir des données récupérées
-      final salonModel = SalonModel(
-        // Assurez-vous d'adapter ces champs à votre modèle SalonModel
-        name: salonData['name'],
-        address: salonData['address'],
-        image: salonData['image'],
-        CartNumber: salonData['cartNumber'],
-        email: salonData['email'],
-        phone: salonData['phone'],
-        isFavourite: false,
-        id: salonData['id'],
-        // Ajoutez d'autres champs si nécessaire
-      );
-    
-              appProvider.updateSalonInfoFirebase(context, salonModel, image!);
+                final salonDoc = await FirebaseFirestore.instance.collection(widget.userType == "salons" ? "salons" : "freelancers").doc(salonId).get();
+                final salonData = salonDoc.data() as Map<String, dynamic>;
+
+                salonData['image'][0] = imageUrl;
+                salonData['name']=textEditingController.text;
+
+                await salonDoc.reference.update(salonData);
+
+                showMessage("Profil mis à jour avec succès!");
+  await Future.delayed(Duration(seconds: 1));
+  
+  Get.to(() =>  SalonProfilScreen(userType: widget.userType,));
+              } catch (error) {
+                print("Erreur lors de la mise à jour du profil : $error");
+              }
             },
           ),
         ],

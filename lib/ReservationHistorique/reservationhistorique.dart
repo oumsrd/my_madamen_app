@@ -70,9 +70,6 @@ class _HistoriqueReservationState extends State<HistoriqueReservation> {
         _serviceUtilizedMap[reservationId] = status == 'Confirmed';
       });
     }
-
-      
-
       // Triez la liste des réservations en ordre décroissant de la date et de l'heure
       _reservations.sort((a, b) {
         DateTime dateA = DateTime.parse(a['date'] + ' ' + a['time']);
