@@ -79,7 +79,7 @@ NotificationApi.showScheduledNotification(
         backgroundColor: BbPink,
         centerTitle: true,
         title: const Text(
-          "Checkout",
+          "Caisse",
           style: TextStyle(
             color: Colors.white,
           ),
