@@ -56,9 +56,9 @@ class _CheckoutState extends State<Checkout> {
     print("heure maintenannt est ${DateTime.now()}" );
 NotificationApi.showScheduledNotification(
       title: 'Confirmation de réservation',
-      body: 'Avez vous bénéficié du service ?',
+      body: 'Avez-vous bénéficié du service ?',
       payload: 'Avez vous bénéficié du service',
-      scheduledDate: reservationTime.add(const Duration(seconds: 10))
+      scheduledDate: reservationTime.add(const Duration(hours: 1))
     );
 
      await FirebaseFirestore.instance
