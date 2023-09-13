@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_madamn_app/Consts/colors.dart';
 import 'package:my_madamn_app/widgets_common/our_button.dart';
+import 'package:velocity_x/velocity_x.dart';
 import '../constants/constants.dart';
 import '../firebase_helper/firebase_auth_helper/firebase_auth_helper.dart';
 
@@ -65,19 +66,23 @@ catch (e){print(e);}
         ),
       ),
       body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+       padding: const EdgeInsets.symmetric(horizontal: 20),
         children: [
-          TextFormField(
-  controller: oldPassword,
-  obscureText: isShowPassword,
-  decoration: InputDecoration(
-    hintText: "Encien mot de pass",
-    prefixIcon: const Icon(
-      Icons.password_sharp,
-    ),
-  ),
-),
+                 200.heightBox,
 
+          TextFormField(
+      controller: oldPassword,
+      obscureText: isShowPassword,
+      decoration: InputDecoration(
+        hintText: "Encien mot de pass",
+        prefixIcon: const Icon(
+      Icons.password_sharp,
+        ),
+      ),
+      ),  const SizedBox(
+            height: 24.0,
+          ),
+      
           TextFormField(
             controller: newpassword,
             obscureText: isShowPassword,
@@ -116,30 +121,30 @@ catch (e){print(e);}
             height: 36.0,
           ),
          ourButton(
-  title: "Update",
-  onPress: () async {
-    if (oldPassword.text.isEmpty) {
+      title: "Update",
+      onPress: () async {
+        if (oldPassword.text.isEmpty) {
       showMessage("Encien mot de pass est vide");
-    } else if (newpassword.text.isEmpty) {
+        } else if (newpassword.text.isEmpty) {
       showMessage("Nouveau mot de pass est vide");
-    } else if (confirmpassword.text.isEmpty) {
+        } else if (confirmpassword.text.isEmpty) {
       showMessage("Confirmer mot de pass est vide");
-    } else if (confirmpassword.text == newpassword.text) {
+        } else if (confirmpassword.text == newpassword.text) {
       // Vérifier l'ancien mot de passe ici
       bool isOldPasswordCorrect = await FirebaseAuthHelper.instance.verifyOldPassword(oldPassword.text);
-
+      
       if (isOldPasswordCorrect) {
         // L'ancien mot de passe est correct, vous pouvez changer le mot de passe ici
         FirebaseAuthHelper.instance.changePassword(newpassword.text, context);
       } else {
         showMessage("Encien mot de passe est incorrect");
       }
-    } else {
+        } else {
       showMessage("Confirmer mot de pass n'est pas le meme");
-    }
-  },
-),
-
+        }
+      },
+      ),
+      
         ],
       ),
     );

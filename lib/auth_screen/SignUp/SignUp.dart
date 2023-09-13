@@ -65,7 +65,6 @@ class _SignupState extends State<Signup> {
                       Center(child: boldText(text: "Sign Up",color: BbRed)),
                        Row(children:[ 
                         20.widthBox,
-                       // normalText(text:"Nom du Salon",color: BbRed)
                        ]),
                       20.heightBox,
                       Padding(

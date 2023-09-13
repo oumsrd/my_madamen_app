@@ -73,7 +73,7 @@ catch (e){print(e);}
           Expanded(
             child: Column(
               children: [
-            image == null
+            image == ""
                     ? const Icon(
                        Icons.person_outline,
                         size: 100,

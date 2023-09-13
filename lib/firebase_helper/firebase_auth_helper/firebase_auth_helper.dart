@@ -57,7 +57,7 @@ class FirebaseAuthHelper {
       UserCredential userCredential = await _auth
           .createUserWithEmailAndPassword(email: email, password: password);
       UserModel userModel = UserModel(
-          id: userCredential.user!.uid, name: name, email: email, image: null);
+          id: userCredential.user!.uid, name: name, email: email, image: "");
 
       _firestore.collection("users").doc(userModel.id).set(userModel.toJson());
       Navigator.of(context, rootNavigator: true).pop();

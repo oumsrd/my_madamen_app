@@ -16,6 +16,7 @@ class _HistoriqueReservationState extends State<HistoriqueReservation> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   late String _firstName = "";
+  late String userImage="";
 
   List<Map<String, dynamic>> _reservations = [];
   late Map<String, bool> _serviceUtilizedMap = {};
@@ -41,6 +42,7 @@ class _HistoriqueReservationState extends State<HistoriqueReservation> {
 
       setState(() {
         _firstName = docSnapshot['name'];
+        userImage=docSnapshot['image'];
       });
     } catch (e) {
       print('Error fetching user data: $e');
@@ -114,9 +116,15 @@ class _HistoriqueReservationState extends State<HistoriqueReservation> {
             SizedBox(height: 10),
             Row(
               children: [
+                  userImage == ""
+                    ? const Icon(
+                       Icons.person_outline,
+                        size: 60,
+                      )
+                    : 
                 CircleAvatar(
                   radius: 25,
-                  backgroundImage: NetworkImage(user!.photoURL!),
+                  backgroundImage: NetworkImage(userImage),
                 ),
                 SizedBox(width: 10),
                 Text(
