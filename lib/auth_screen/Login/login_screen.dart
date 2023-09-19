@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:my_madamn_app/Salon/ReservationListe.dart';
-import 'package:my_madamn_app/auth_screen/SignUp/chose_role.dart';
-import 'package:my_madamn_app/bienvenue/bienvenue.dart';
-import 'package:my_madamn_app/widgets_common/square_tile.dart';
+import 'package:app_rim/Salon/ReservationListe.dart';
+import 'package:app_rim/auth_screen/SignUp/chose_role.dart';
+import 'package:app_rim/bienvenue/bienvenue.dart';
+import 'package:app_rim/widgets_common/square_tile.dart';
 
 //import 'package:http/http.dart' as http;
 import 'package:velocity_x/velocity_x.dart';

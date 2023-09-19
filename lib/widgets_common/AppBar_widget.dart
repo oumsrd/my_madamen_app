@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:my_madamn_app/widgets_common/menu_boutton.dart';
+import 'package:app_rim/widgets_common/menu_boutton.dart';
 import '../Consts/colors.dart';
 
 Widget CustomAppBar() {

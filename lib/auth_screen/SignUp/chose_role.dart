@@ -3,8 +3,8 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 
 import 'package:get/get.dart';
-import 'package:my_madamn_app/auth_screen/SignUp/chosescreen.dart';
-import 'package:my_madamn_app/auth_screen/SignUp/signup_screen.dart';
+import 'package:app_rim/auth_screen/SignUp/chosescreen.dart';
+import 'package:app_rim/auth_screen/SignUp/signup_screen.dart';
 //import 'package:http/http.dart' as http;
 import 'package:velocity_x/velocity_x.dart';
 import '../../Consts/colors.dart';

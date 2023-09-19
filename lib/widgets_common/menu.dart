@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:my_madamn_app/Salon/AddServices.dart';
-import 'package:my_madamn_app/Salon/SalonProfil.dart';
+import 'package:app_rim/Salon/AddServices.dart';
+import 'package:app_rim/Salon/SalonProfil.dart';
 
 import '../Consts/colors.dart';
 import '../Salon/PackBridalScreen.dart';

@@ -1,5 +1,5 @@
 
-import 'package:my_madamn_app/Consts/constant.dart';
+import 'package:app_rim/Consts/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:velocity_x/velocity_x.dart';
 

@@ -1,11 +1,10 @@
  import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:my_madamn_app/Consts/const.dart';
-import 'package:my_madamn_app/Pack%20Bridal/FreelancerPack.dart';
-import 'package:my_madamn_app/SalonsScreen/SalonListScreen.dart';
-import 'package:my_madamn_app/account_screen/account_screens.dart';
-import 'package:my_madamn_app/favourite_screen/favourite_screen.dart';
-import 'package:my_madamn_app/servicedomicile/ServiceDomicile.dart';
+import 'package:app_rim/Consts/const.dart';
+import 'package:app_rim/Pack%20Bridal/FreelancerPack.dart';
+import 'package:app_rim/SalonsScreen/SalonListScreen.dart';
+import 'package:app_rim/account_screen/account_screens.dart';
+import 'package:app_rim/favourite_screen/favourite_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 

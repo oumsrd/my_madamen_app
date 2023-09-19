@@ -23,15 +23,6 @@ class _SalonDetails2State extends State<SalonDetails2> {
   bool isSelected = true;
   Future<String> goToReserverSalon() async {
   final reservationRef = FirebaseFirestore.instance.collection('reservations').doc();
- //List selectedServiceNames = selectedServices.map((service) => service['name']).toList();
-
-  /*await reservationRef.set({
-    'id': reservationRef.id,
-    'salonName': widget.salonModel.name,
-    'selectedServices':selectedServiceNames,
-    'totalPrice': totalPrice.toString() ,
-    'salonId': widget.salonModel.id,
-  });*/
   return reservationRef.id; 
 }
 
@@ -59,8 +50,6 @@ void toggleSubService(Map<String, dynamic> subServiceData) {
     
   
 }
-
-
   num totalPrice = 0;
 
   void updateTotalPrice() {
@@ -156,7 +145,6 @@ List<Map<String, dynamic>> Services=[];
                       );
                     },
                   ),
-                    //const SizedBox(height: 10),
                     Center(
                       child: SizedBox(
                         height: 45,
@@ -168,12 +156,11 @@ List<Map<String, dynamic>> Services=[];
                             print(widget.salonModel.name);
                             QuerySnapshot<Map<String, dynamic>> doc =await FirebaseFirestore.instance.collectionGroup('services').get();
                             print(doc);
-                            //for();
-                             List<String> serviceNames = [];
+                            List<String> serviceNames = [];
               
                     // Parcourir les documents pour extraire les noms de service
                     doc.docs.forEach((serviceDoc) {
-                      String serviceName = serviceDoc.get('name'); // Remplacez 'name' par le champ approprié dans votre document.
+                      String serviceName = serviceDoc.get('name'); 
                       serviceNames.add(serviceName);
                     });
                     print(serviceNames);
@@ -190,10 +177,7 @@ List<Map<String, dynamic>> Services=[];
                   
                             print(isSelected);
                             print(selectedServices);
-                          //  Get.to(() => ReserverSalon(
-                                  //selectedServices: selectedServices,
-                                  //totalPrice: totalPrice,
-                               // ));
+                       
                           },
                         ),
                       ),

@@ -7,9 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:my_madamn_app/account_screen/account_screens.dart';
-import 'package:my_madamn_app/constants/constants.dart';
-import 'package:my_madamn_app/widgets_common/our_button.dart';
+import 'package:app_rim/account_screen/account_screens.dart';
+import 'package:app_rim/constants/constants.dart';
+import 'package:app_rim/widgets_common/our_button.dart';
 import 'package:provider/provider.dart';
 
 import '../../provider/app_provider.dart';

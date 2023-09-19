@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:my_madamn_app/Consts/colors.dart';
-import 'package:my_madamn_app/Pack%20Bridal/packbridalDetails.dart';
-import 'package:my_madamn_app/widgets_common/AppBar_widget.dart';
+import 'package:app_rim/Consts/colors.dart';
+import 'package:app_rim/Pack%20Bridal/packbridalDetails.dart';
+import 'package:app_rim/widgets_common/AppBar_widget.dart';
 import 'package:velocity_x/velocity_x.dart';
 import '../widgets_common/menu_boutton.dart';
 

@@ -1,5 +1,5 @@
-import 'package:my_madamn_app/Consts/const.dart';
-import 'package:my_madamn_app/widgets_common/normal_text.dart';
+import 'package:app_rim/Consts/const.dart';
+import 'package:app_rim/widgets_common/normal_text.dart';
 
 Widget customTextField({label , hint, controller,isDesc = false}){
   return TextFormField(

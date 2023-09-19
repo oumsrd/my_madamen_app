@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:my_madamn_app/Consts/colors.dart';
+import 'package:app_rim/Consts/colors.dart';
 import 'package:provider/provider.dart';
 
 import '../../firebase_helper/firebase_firestore_helper/firebase_firestore.dart';

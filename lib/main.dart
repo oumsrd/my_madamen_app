@@ -3,12 +3,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:my_madamn_app/Consts/const.dart';
-import 'package:my_madamn_app/ReservationHistorique/reservationhistorique.dart';
-import 'package:my_madamn_app/SalonsScreen/SalonListScreen.dart';
-import 'package:my_madamn_app/auth_screen/Login/login_screen.dart';
-import 'package:my_madamn_app/bienvenue/bienvenue.dart';
-import 'package:my_madamn_app/provider/app_provider.dart';
+import 'package:app_rim/Consts/const.dart';
+import 'package:app_rim/ReservationHistorique/reservationhistorique.dart';
+import 'package:app_rim/SalonsScreen/SalonListScreen.dart';
+import 'package:app_rim/auth_screen/Login/login_screen.dart';
+import 'package:app_rim/provider/app_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:get/get.dart';
 import 'Salon/ReservationListe.dart';
@@ -115,7 +114,7 @@ void onClickedNotification(NotificationResponse? payload) {
       child: GetMaterialApp(
        navigatorKey: navigatorKey,
         debugShowCheckedModeBanner: false,
-        title: 'APRIM',
+        title: 'app_rim',
 
       home: 
   (userType=="client" && isLoggedin)

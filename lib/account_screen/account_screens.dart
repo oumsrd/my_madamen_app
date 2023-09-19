@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:my_madamn_app/ReservationHistorique/reservationhistorique.dart';
-import 'package:my_madamn_app/auth_screen/Login/login_screen.dart';
-import 'package:my_madamn_app/widgets_common/our_button.dart';
+import 'package:app_rim/ReservationHistorique/reservationhistorique.dart';
+import 'package:app_rim/auth_screen/Login/login_screen.dart';
+import 'package:app_rim/widgets_common/our_button.dart';
 
 import '../../provider/app_provider.dart';
 import 'package:provider/provider.dart';

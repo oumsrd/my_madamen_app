@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:my_madamn_app/widgets_common/menu.dart';
-import 'package:my_madamn_app/widgets_common/our_button.dart';
+import 'package:app_rim/widgets_common/menu.dart';
+import 'package:app_rim/widgets_common/our_button.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:intl/intl.dart';
 import '../Consts/colors.dart';
@@ -222,7 +222,8 @@ SingleChildScrollView(
                   final date = reservation['date'] ;
                   final time = reservation['time'] ;
                   final salon = reservation['salonName'];
-                  final price=reservation['totalPrice'] ;
+                  final price=reservation['totalePrice'] ;
+                  final address = widget.userType == "freelancer" ? reservation['adresse'] : null;
                  
                   return Card(
                     margin: EdgeInsets.symmetric(vertical: 10.0),
@@ -258,7 +259,13 @@ SingleChildScrollView(
                           ),
                          
                          
-                          
+                            if (widget.userType == "freelancer" && address != null)
+                          Text(
+                             'Adresse: $address',
+                             style: const TextStyle(
+                             fontSize: 16,
+                              ),
+                               ),
                            SizedBox(height: 10),
                           
                            Text(
@@ -291,12 +298,7 @@ SingleChildScrollView(
                  ),
                  
                  
-              /* subtitle: Text(
-                  ' ${service['totalPrice']} DH',
-              style: const TextStyle(
-              fontSize: 12,
-            ),
-          ),*/
+        
         ),
       )
       .toList(),

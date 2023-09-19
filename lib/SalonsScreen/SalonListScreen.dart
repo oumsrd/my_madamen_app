@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:my_madamn_app/Consts/colors.dart';
-import 'package:my_madamn_app/widgets_common/AppBar_widget.dart';
-import 'package:provider/provider.dart';
+import 'package:app_rim/Consts/colors.dart';
+import 'package:app_rim/widgets_common/AppBar_widget.dart';
 import '../firebase_helper/firebase_firestore_helper/firebase_firestore.dart';
 import '../models/salon_model/salon_model.dart';
-import '../provider/app_provider.dart';
 import '../widgets_common/menu_boutton.dart';
 import 'SalonInfo.dart';
 

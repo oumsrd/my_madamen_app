@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:my_madamn_app/Consts/colors.dart';
-import 'package:my_madamn_app/Reservation/ReservationSuccess.dart';
-import 'package:my_madamn_app/widgets_common/normal_text.dart';
-import 'package:my_madamn_app/widgets_common/our_button.dart';
+import 'package:app_rim/Consts/colors.dart';
+import 'package:app_rim/Reservation/ReservationSuccess.dart';
+import 'package:app_rim/widgets_common/normal_text.dart';
+import 'package:app_rim/widgets_common/our_button.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 import '../widgets_common/AppBar_widget.dart';

@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />  
         
     <application
-        android:label="my_madamn_app"
+        android:label="app_rim"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

@@ -1,4 +1,4 @@
-import 'package:my_madamn_app/Consts/const.dart';
+import 'package:app_rim/Consts/const.dart';
 
 Widget loadingIndicator({circleColor = purpleColor }){
 

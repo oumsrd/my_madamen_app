@@ -2,9 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:my_madamn_app/Consts/colors.dart';
+import 'package:app_rim/Consts/colors.dart';
 import 'package:velocity_x/velocity_x.dart';
-import '../Reservation/ReservationSuccess.dart';
 import 'check_out.dart';
 import '../models/salon_model/salon_model.dart';
 import '../widgets_common/AppBar_widget.dart';
@@ -127,34 +126,39 @@ bool checkReservation(DateTime? date, TimeOfDay? time) {
       'salon': widget.salonModel.name,
       'userId': FirebaseAuth.instance.currentUser?.uid, 
       'userName': FirebaseAuth.instance.currentUser?.displayName,
-      // Ajoutez les autres données que vous voulez envoyer
     };
+      if (widget.userType == "freelancer") {
+      reservationData['adresse'] =addressController.text; 
+    }
+
     final reservationRef =
         FirebaseFirestore.instance.collection('reservations').doc(widget.reservationId);
  List selectedServiceNames = widget.selectedServices.map((service) => service['name']).toList();
 
     await reservationRef.set({
        'id': reservationRef.id,
-    'salonName': widget.salonModel.name,
-    'selectedServices':selectedServiceNames,
-    'totalePrice': widget.totalPrice.toString() ,
-    'salonId': widget.salonModel.id,
+       'salonName': widget.salonModel.name,
+       'selectedServices':selectedServiceNames,
+      'totalePrice': widget.totalPrice.toString() ,
+      'salonId': widget.salonModel.id,
       'date': dateFormatter.format(selectedDate!),
       'time': DateFormat.Hm().format(selectedDateTime),
       'userId': FirebaseAuth.instance.currentUser?.uid,
       'userName': FirebaseAuth.instance.currentUser?.displayName,
-      'isNotified':false
+      'isNotified':false,
+      if (widget.userType == "freelancer") 'adresse': reservationData['adresse'],
+
     });
 
     print(widget.reservationId);
-    //await Get.to(() => ReservationSuccess(/*passer des données si nécessaire*/));
-        await Get.to(() => Checkout( reservationData: reservationData,
+      await Get.to(() => Checkout( reservationData: reservationData,
       selectedServices: widget.selectedServices,
       totalPrice: widget.totalPrice,singleSalon:widget.salonModel,reservationId:reservationRef.id ,/*passer des données si nécessaire*/));
 
   }
 }
 
+TextEditingController addressController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -229,6 +233,31 @@ bool checkReservation(DateTime? date, TimeOfDay? time) {
                   ),
                 ),
                 SizedBox(height: 20),
+                Visibility(
+            visible: widget.userType == "freelancer",
+            child: Column(
+              children: [
+                Text(
+                  'Adresse:',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+                SizedBox(height: 10),
+                TextField(
+                  controller: addressController,
+                /*  onChanged: (address) {
+                   addressController.text=address;
+                  },*/
+                  decoration: InputDecoration(
+                    hintText: 'Entrez votre adresse',
+                  ),
+                ),
+              ],
+            ),
+            )
+            ,
                 Text(
                   'Jour:',
                   style: TextStyle(
@@ -268,7 +297,7 @@ bool checkReservation(DateTime? date, TimeOfDay? time) {
                 if (isAlreadyReserved)
                   Column(
                     children: [
-                      Text(
+                   const Text(
                         'Cette date et heure sont déjà réservées.',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
@@ -276,7 +305,7 @@ bool checkReservation(DateTime? date, TimeOfDay? time) {
                           color: Colors.red,
                         ),
                       ),
-                      SizedBox(height: 20),
+                     const SizedBox(height: 20),
                       Center(
                         child: Column(
                           children: [
@@ -295,7 +324,7 @@ bool checkReservation(DateTime? date, TimeOfDay? time) {
                                 },
                               ),
                             ),
-                            SizedBox(height: 20),
+                          const   SizedBox(height: 20),
                             SizedBox(
                               height: 45,
                               width: context.screenWidth - 107,

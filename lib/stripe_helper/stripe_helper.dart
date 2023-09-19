@@ -2,11 +2,10 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:my_madamn_app/Consts/const.dart';
+import 'package:app_rim/Consts/const.dart';
 import 'package:provider/provider.dart';
 
 

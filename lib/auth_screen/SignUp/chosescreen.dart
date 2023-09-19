@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:my_madamn_app/auth_screen/SignUp/SignUp.dart';
+import 'package:app_rim/auth_screen/SignUp/SignUp.dart';
 import 'package:velocity_x/velocity_x.dart';
 import '../../Consts/colors.dart';
 import '../../widgets_common/normal_text.dart';

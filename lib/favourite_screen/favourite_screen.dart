@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:my_madamn_app/Consts/colors.dart';
-import 'package:my_madamn_app/favourite_screen/widgets/single_favourite_item.dart';
+import 'package:app_rim/Consts/colors.dart';
+import 'package:app_rim/favourite_screen/widgets/single_favourite_item.dart';
 import 'package:provider/provider.dart';
 
 import '../../provider/app_provider.dart';

@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:my_madamn_app/models/subservice_model/subservice.dart';
 
 ServiceModel serviceModelFromJson(String str) => ServiceModel.fromJson(json.decode(str));
 

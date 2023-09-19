@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:my_madamn_app/auth_screen/Login/login_screen.dart';
-import 'package:my_madamn_app/bienvenue/bienvenue.dart';
+import 'package:app_rim/auth_screen/Login/login_screen.dart';
+import 'package:app_rim/bienvenue/bienvenue.dart';
 //import 'package:http/http.dart' as http;
 import 'package:velocity_x/velocity_x.dart';
 import '../../Consts/colors.dart';

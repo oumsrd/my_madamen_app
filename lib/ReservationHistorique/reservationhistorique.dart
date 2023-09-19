@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:my_madamn_app/widgets_common/AppBar_widget.dart';
+import 'package:app_rim/widgets_common/AppBar_widget.dart';
 import 'dart:async';
 
 class HistoriqueReservation extends StatefulWidget {

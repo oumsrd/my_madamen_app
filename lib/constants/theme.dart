@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_madamn_app/Consts/colors.dart';
+import 'package:app_rim/Consts/colors.dart';
 
 ThemeData themeData = ThemeData(
     scaffoldBackgroundColor: Colors.white,

@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:my_madamn_app/Consts/colors.dart';
-import 'package:my_madamn_app/Salon/PackBridalScreen.dart';
-import 'package:my_madamn_app/widgets_common/our_button.dart';
-import 'package:my_madamn_app/firebase_helper/firebase_auth_helper/firebase_auth_helper.dart';
+import 'package:app_rim/Consts/colors.dart';
+import 'package:app_rim/Salon/PackBridalScreen.dart';
+import 'package:app_rim/widgets_common/our_button.dart';
+import 'package:app_rim/firebase_helper/firebase_auth_helper/firebase_auth_helper.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 import '../auth_screen/Login/login_screen.dart';
